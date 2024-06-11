@@ -5,6 +5,7 @@ import com.example.exception.CustomException;
 import com.example.mapper.AdminMapper;
 
 import com.example.service.AdminService;
+import com.example.utils.JwtTokenUtils;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,9 @@ public class AdminServiceImpl implements AdminService {
         if(!admin.getPassword().equals(dbAdmin.getPassword())){
             throw new CustomException("账号或密码错误！");
         }
+        //生成token
+        String token = JwtTokenUtils.genToken(dbAdmin.getId().toString(), dbAdmin.getPassword());
+        dbAdmin.setToken(token);
         return dbAdmin;
     }
 
@@ -49,6 +53,12 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public void deleteById(Integer id) {
         adminMapper.deleteById(id);
+    }
+
+    @Override
+    public Admin findById(Integer id) {
+        Admin dbadmin = adminMapper.findById(id);
+        return dbadmin;
     }
 
     @Override

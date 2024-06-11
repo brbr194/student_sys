@@ -62,4 +62,10 @@ public class AdminController {
         adminService.deleteById(id);
         return Result.success();
     }
+
+    @GetMapping("/{id}")
+    public Result find(@PathVariable Integer id){
+        Admin admin = adminService.findById(id);
+        return Result.success(admin);
+    }
 }

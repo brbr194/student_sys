@@ -36,4 +36,11 @@ public interface AdminService {
      * @param id
      */
     void deleteById(Integer id);
+
+    /**
+     * 根据id查
+     * @param id
+     * @return
+     */
+    Admin findById(Integer id);
 }

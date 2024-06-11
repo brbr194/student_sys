@@ -7,10 +7,25 @@
           <div style="font-weight: bold; font-size: 24px; margin-left: 5px">学生成绩管理系统</div>
         </div>
       </div>
-      <div style="width: fit-content; padding-right: 10px; display: flex; align-items: center;">
+
+<!--      <div style="width: fit-content; padding-right: 10px; display: flex; align-items: center;">
         <img src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png" alt="" style="width: 40px; height: 40px">
         <span style="margin-left: 5px" id="username">{{user.name}}</span>
-      </div>
+      </div>-->
+      <el-dropdown>
+    <span class="el-dropdown-link">
+<!--      <img src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png" alt="" style="width: 40px; height: 40px">-->
+      <span style="margin-left: 5px" id="username">{{user.name}}</span>
+      <el-icon class="el-icon--right">
+        <arrow-down />
+      </el-icon>
+    </span>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item @click="logout">退出登录</el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
     </div>
 
     <div style="display: flex">
@@ -51,10 +66,10 @@
             <el-icon><Tickets /></el-icon>
             <span>日志查看</span>
           </el-menu-item>
-          <el-menu-item index="login" @click="logout">
-            <el-icon><SwitchButton /></el-icon>
-            <span>退出系统</span>
-          </el-menu-item>
+<!--          <el-menu-item index="login" @click="logout">-->
+<!--            <el-icon><SwitchButton /></el-icon>-->
+<!--            <span>退出系统</span>-->
+<!--          </el-menu-item>-->
         </el-menu>
       </div>
 
@@ -69,11 +84,13 @@
 <script setup>
 import { useRoute } from 'vue-router'
 import {reactive} from "vue";
+import router from "@/router";
 const $route = useRoute()
 console.log($route.path)
 
 const logout = () => {
-  localStorage.removeItem('login-user')
+  localStorage.removeItem('login_user')
+  router.push('/login')
 }
 
 const user = JSON.parse(localStorage.getItem('login_user') || '{}')

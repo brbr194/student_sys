@@ -56,6 +56,8 @@ public class Admin implements Serializable {
     @Column(name="role")
     private String role;
 
+    @Transient
+    private String token;
     public Admin() {
     }
 

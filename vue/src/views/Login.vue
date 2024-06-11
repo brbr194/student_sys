@@ -52,8 +52,8 @@ const login = () =>{
       request.post(`/${roles.value}/login`, data.form).then(res=>{
         if (res.code === '200') {
           localStorage.setItem('login_user', JSON.stringify(res.data))
-          ElMessage.success('登录成功')
           router.push('/home') // 跳转到主页
+          ElMessage.success('登录成功')
         } else {
           ElMessage.error(res.msg)
         }

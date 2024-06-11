@@ -42,4 +42,12 @@ public interface AdminMapper {
      */
     @Delete("delete from admin where id = #{id}")
     void deleteById(Integer id);
+
+    /**
+     * 根据id查找
+     * @param id
+     * @return
+     */
+    @Select("select * from admin where id = #{id}")
+    Admin findById(Integer id);
 }

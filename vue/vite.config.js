@@ -30,6 +30,9 @@ export default defineConfig({
       useSource: true,
     }),
   ],
+  server: {				// ← ← ← ← ← ←
+    host: '0.0.0.0'	// ← 新增内容 ←
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))

@@ -1,8 +1,8 @@
 <template >
   <div>
     <div class="card" style="margin-bottom: 10px;">
-      <el-input  v-model="data.name" :prefix-icon="Search" style="width: 300px; margin-right: 10px" placeholder="请输入管理员姓名进行查询"></el-input>
-      <el-input  v-model="data.username" :prefix-icon="Search" style="width: 300px; margin-right: 10px" placeholder="请输入管理员用户名进行查询"></el-input>
+      <el-input  v-model="data.name" :prefix-icon="Search" style="width: 250px; margin-right: 10px" placeholder="请输入管理员姓名进行查询"></el-input>
+      <el-input  v-model="data.username" :prefix-icon="Search" style="width: 250px; margin-right: 10px" placeholder="请输入管理员用户名进行查询"></el-input>
       <el-button type="primary" @click="load">查询</el-button>
       <el-button type="info" style="margin: 0 10px" @click="reset">重置</el-button>
     </div>
@@ -11,7 +11,7 @@
       <div style="margin-bottom: 10px">
         <el-button type="primary" @click="handleAdd">新增</el-button>
       </div>
-      <el-table stripe :data="data.tableData">
+      <el-table stripe :data="data.tableData" ref="tableRef">
         <el-table-column label="管理员姓名" prop="name"></el-table-column>
         <el-table-column label="用户名" prop="username"></el-table-column>
         <el-table-column label="创建时间" prop="createdTime"></el-table-column>
@@ -19,8 +19,8 @@
 <!--        <el-table-column label="密码" prop="password"></el-table-column>-->
         <el-table-column label="操作" align="center" width="160">
           <template #default="scope">
-            <el-button type="primary" @click="handleEdit(scope.row)" >编辑</el-button>
-            <el-button type="danger" @click="handleDelete(scope.row.id)" >删除</el-button>
+            <el-button type="primary" @click="handleEdit(scope.row)" v-if="scope.row.name !== login_user.name" >编辑</el-button>
+            <el-button type="danger" @click="handleDelete(scope.row.id)" v-if="scope.row.name !== login_user.name">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -50,13 +50,13 @@
 
     <el-dialog title="新增或编辑管理员信息" width="40%" v-model="data.formVisible" :close-on-click-modal="false" destroy-on-close>
       <el-form :model="data.form" label-width="150px" style="padding-right: 50px" ref="formRef" :rules="rules">
-        <el-form-item label="管理员姓名：" prop="name">
+        <el-form-item label="管理员姓名：" prop="name" required>
           <el-input v-model="data.form.name" autocomplete="off" />
         </el-form-item>
-        <el-form-item label="管理员用户名：" prop="username" >
+        <el-form-item label="管理员用户名：" prop="username" required>
           <el-input v-model="data.form.username" autocomplete="off" />
         </el-form-item>
-        <el-form-item label="密码：" prop="password">
+        <el-form-item label="密码：" prop="password" required>
           <el-input v-model="data.form.password" autocomplete="off" show-password  />
         </el-form-item>
       </el-form>
@@ -76,6 +76,7 @@ import request from "@/utils/request";
 import {reactive, ref} from "vue";
 import {ElMessage, ElMessageBox} from "element-plus";
 import {Search} from "@element-plus/icons-vue";
+import {column} from "element-plus/es/components/table-v2/src/common";
 
 
 request.get('/').then(res => {
@@ -132,9 +133,15 @@ const load = () =>{
       username:data.username
     }
   }).then(res =>{
-    console.log(res.data.list)
+    if(res.code !== '200'){
+      ElMessage.error(res.msg)
+      //console.log(res.data.list)
+    }else{
+      //console.log(res.data.list)
       data.tableData = res.data?.list || []
       data.total = res.data?.total || 0
+    }
+
   })
 }
 load()
@@ -158,11 +165,16 @@ const reset = () =>{
       username:''
     }
   }).then(res =>{
-    console.log(res.data.list)
-    data.name = ''
-    data.username = ''
-    data.tableData = res.data?.list || []
-    data.total = res.data?.total || 0
+    if(res.code !== '200'){
+      ElMessage.error(res.msg)
+    }else{
+      console.log(res.data.list)
+      data.name = ''
+      data.username = ''
+      data.tableData = res.data?.list || []
+      data.total = res.data?.total || 0
+    }
+
   })
 }
 const formRef = ref();
@@ -184,18 +196,25 @@ const rules = reactive({
 
 //把添加的信息保存到数据库
 const save = () =>{
-  request.request({
-    url: data.form.id? '/admin/update':'/admin/add',
-    method:data.form.id? 'PUT':'POST',
-    data: data.form
-  }).then(res =>{
-    if(res.code === '200'){
-      load()
-      ElMessage.success("操作成功")
-      data.formVisible = false
-    }else{
-      ElMessage.error(res.msg)
-    }
+  formRef.value.validate((valid)=>{
+  if(valid){
+    request.request({
+      url: data.form.id? '/admin/update':'/admin/add',
+      method:data.form.id? 'PUT':'POST',
+      data: data.form
+    }).then(res =>{
+      if(res.code === '200'){
+        load()
+        ElMessage.success("操作成功")
+        data.formVisible = false
+      }else{
+        ElMessage.error(res.msg)
+      }
+    })
+   }
   })
 }
+
+const login_user = JSON.parse(localStorage.getItem('login_user') || '{}')
+
 </script>

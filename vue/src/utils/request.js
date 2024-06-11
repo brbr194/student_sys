@@ -3,7 +3,8 @@ import router from '../router'
 import axios from "axios";
 
 const request = axios.create({
-    baseURL: import.meta.env.VITE_BASE_URL,
+    //baseURL: import.meta.env.VITE_BASE_URL,
+    baseURL: 'http://localhost:9090/api',
     timeout: 30000  // 后台接口超时时间设置
 })
 
@@ -11,6 +12,12 @@ const request = axios.create({
 // 可以自请求发送前对请求做一些处理
 request.interceptors.request.use(config => {
     config.headers['Content-Type'] = 'application/json;charset=utf-8';
+
+    const user = localStorage.getItem("login_user");
+    if (user) {
+        config.headers['token'] = JSON.parse(user).token;
+    }
+
     return config
 }, error => {
     return Promise.reject(error)
