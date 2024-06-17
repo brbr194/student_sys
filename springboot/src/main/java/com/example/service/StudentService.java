@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 public interface StudentService {
     Student findById(Integer id);
 
+    Student findByStudentName(String studentName);
+
     void deleteById(Integer id);
 
     void updateById(Student student);

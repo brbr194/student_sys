@@ -1,8 +1,8 @@
 <template >
   <div>
     <div class="card" style="margin-bottom: 10px;">
-      <el-input  v-model="data.name" :prefix-icon="Search" style="width: 250px; margin-right: 10px" placeholder="请输入学生姓名进行查询"></el-input>
-      <el-input  v-model="data.username" :prefix-icon="Search" style="width: 250px; margin-right: 10px" placeholder="请输入学生学号进行查询"></el-input>
+      <el-input  v-model="data.name" :prefix-icon="Search" style="width: 250px; margin-right: 10px" placeholder="请输入教师姓名进行查询"></el-input>
+      <el-input  v-model="data.teacherNumber" :prefix-icon="Search" style="width: 250px; margin-right: 10px" placeholder="请输入教师工号进行查询"></el-input>
       <el-button type="primary" @click="load">查询</el-button>
       <el-button type="info" style="margin: 0 10px" @click="reset">重置</el-button>
     </div>
@@ -12,20 +12,17 @@
         <el-button type="primary" @click="handleAdd">新增</el-button>
       </div>
       <el-table stripe :data="data.tableData" ref="tableRef" >
-        <el-table-column fixed label="学生学号" prop="student_number" width="125px"></el-table-column>
-        <el-table-column label="学生姓名" prop="student_name" width="125px"></el-table-column>
-        <el-table-column label="性别" prop="gender" width="125px"></el-table-column>
-        <el-table-column label="年级" prop="grade" width="125px"></el-table-column>
-        <el-table-column label="学院" prop="department" width="125px"></el-table-column>
-        <el-table-column label="专业" prop="major" width="125px"></el-table-column>
-        <el-table-column label="手机号" prop="phone_number" width="125px"></el-table-column>
+        <el-table-column fixed label="教师工号" prop="teacherNumber" width="150px"></el-table-column>
+        <el-table-column label="教师姓名" prop="name" width="125px"></el-table-column>
+        <el-table-column label="学院" prop="departmentName" width="125px"></el-table-column>
+        <el-table-column label="手机号" prop="phone" width="125px"></el-table-column>
         <el-table-column label="邮箱" prop="email" width="125px"></el-table-column>
-        <el-table-column label="创建时间" prop="createdTime" width="125px"></el-table-column>
-        <el-table-column label="更新时间" prop="updatedTime" width="125px"></el-table-column>
-                <el-table-column fixed="right" label="操作" align="center" width="160">
+        <el-table-column label="创建时间" prop="createdTime" width="170px"></el-table-column>
+        <el-table-column label="更新时间" prop="updatedTime" width="170px"></el-table-column>
+        <el-table-column fixed="right" label="操作" align="center" width="160">
           <template #default="scope">
-            <el-button type="primary" @click="handleEdit(scope.row)" v-if="scope.row.name !== login_user.name" >编辑</el-button>
-            <el-button type="danger" @click="handleDelete(scope.row.id)" v-if="scope.row.name !== login_user.name">删除</el-button>
+            <el-button type="primary" @click="handleEdit(scope.row)" >编辑</el-button>
+            <el-button type="danger" @click="handleDelete(scope.row.id)" >删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -47,37 +44,44 @@
     </div>
 
 
-    <el-dialog title="新增或编辑学生信息" width="40%" v-model="data.formVisible" :close-on-click-modal="false" destroy-on-close>
+    <el-dialog title="新增或编辑教师信息" width="40%" v-model="data.formVisible" :close-on-click-modal="false" destroy-on-close>
       <el-form :model="data.form" label-width="150px" style="padding-right: 50px" ref="formRef" :rules="rules">
 
-        <el-form-item label="学生学号：" prop="student_number" required>
-          <el-input v-model="data.form.student_number" autocomplete="off" />
+        <el-form-item label="教师工号：" prop="teacherNumber" required >
+          <el-input v-model="data.form.teacherNumber" autocomplete="off" />
         </el-form-item>
+
         <el-form-item label="密码：" prop="password" required>
           <el-input v-model="data.form.password" autocomplete="off" show-password  />
         </el-form-item>
-        <el-form-item label="学生姓名：" prop="student_name" required>
-          <el-input v-model="data.form.student_name" autocomplete="off" />
+
+        <el-form-item label="教师姓名：" prop="name" required>
+          <el-input v-model="data.form.name" autocomplete="off" />
         </el-form-item>
-        <el-form-item label="性别：" prop="gender" required>
-          <el-input v-model="data.form.gender" autocomplete="off" />
+
+        <el-form-item label="学院：" prop="departmentId" required>
+          {{data.form.departmentName}}
+          <el-select
+              v-model="data.form.departmentId"
+              clearable
+              placeholder="选择要更改成的学院"
+              style="width: 90%;margin-bottom: 5px"
+              @visible-change="clear"
+          >
+            <el-option
+                v-for="dept in data.departments"
+                :key="dept.id"
+                :label="dept.department"
+                :value="dept.id"
+            />
+          </el-select>
         </el-form-item>
-        <el-form-item label="年级：" prop="grade" required>
-          <el-input v-model="data.form.grade" autocomplete="off" />
-        </el-form-item>
-        <el-form-item label="学院：" prop="department" required>
-          <el-input v-model="data.form.department" autocomplete="off" />
-        </el-form-item>
-        <el-form-item label="专业：" prop="major" required>
-          <el-input v-model="data.form.department" autocomplete="off" />
-        </el-form-item>
-        <el-form-item label="手机号：" prop="phone_number" required>
-          <el-input v-model="data.form.phone_number" autocomplete="off" />
+        <el-form-item label="手机号：" prop="phone" required>
+          <el-input v-model="data.form.phone" autocomplete="off" />
         </el-form-item>
         <el-form-item label="邮箱：" prop="email" required>
           <el-input v-model="data.form.email" autocomplete="off" />
         </el-form-item>
-
       </el-form>
       <template #footer>
       <span class="dialog-footer">
@@ -97,11 +101,6 @@ import {ElMessage, ElMessageBox} from "element-plus";
 import {Search} from "@element-plus/icons-vue";
 import {column} from "element-plus/es/components/table-v2/src/common";
 
-
-request.get('/').then(res => {
-  console.log(res)
-})
-
 //数据定义
 const data = reactive({
   name: '',
@@ -111,21 +110,39 @@ const data = reactive({
   tableData: [],
   total:0,
   pageSize:5,//一页的条数
-  username:''
+  username:'',
+  teacherNumber:'',
+  departments:[]
 })
 
 const handleAdd = () => {
   data.form = {}
   data.formVisible = true
+  loadDepartment()
 }
 const handleEdit = (row) => {
   data.form = JSON.parse(JSON.stringify(row))
   data.formVisible = true
+  loadDepartment()
+}
+
+const loadDepartment = ()=>{
+  request.get('/department/all',).then(res =>{
+    if(res.code !== '200'){
+      ElMessage.error(res.msg)
+    }else{
+      if(res.data !== []){
+        data.departments = JSON.parse(JSON.stringify(res.data))
+      }else{
+        data.departments = []
+      }
+    }
+  })
 }
 const handleDelete = (id) => {
   ElMessageBox.confirm('删除后数据无法恢复，您确定删除吗?', '删除确认', { type: 'warning' }).then(res => {
     console.log('删除')
-    request.delete('/admin/delete/' + id).then(res=>{
+    request.delete('/teacher/delete/' + id).then(res=>{
       if(res.code === '200'){
         load()
         ElMessage.success("删除成功")
@@ -141,29 +158,39 @@ const handleDelete = (id) => {
     })
   })
 }
-
+const loadDeptName = ()=>{
+  for(let i = 0;i<data.tableData.length;i++){
+    let row = data.tableData[i];
+    for(let j = 0;j<data.departments.length;j++){
+      if(row.departmentId == data.departments[j].id){
+        data.tableData[i].departmentName = data.departments[j].department;
+      }
+    }
+  }
+}
 //分页查询加载
 const load = () =>{
-  request.get('/admin/selectPage',{
+  request.get('/teacher/selectPage',{
     params:{
       pageNum:data.pageNum,
       pageSize:data.pageSize,
       name:data.name,
-      username:data.username
+      teacherNumber:data.teacherNumber
     }
   }).then(res =>{
     if(res.code !== '200'){
       ElMessage.error(res.msg)
-      //console.log(res.data.list)
     }else{
-      //console.log(res.data.list)
+      loadDepartment()
       data.tableData = res.data?.list || []
       data.total = res.data?.total || 0
+      loadDeptName()
     }
-
   })
 }
 load()
+loadDepartment()
+
 //处理当前页的变化
 const handleCurrentChange = (pageNum)=>{
   data.pageNum = pageNum
@@ -176,12 +203,13 @@ const handleSizeChange=(pageSize)=> {
 }
 //重置搜索框
 const reset = () =>{
-  request.get('/admin/selectPage',{
+  request.get('/teacher/selectPage',{
     params:{
       pageNum:1,
       pageSize:data.pageSize,
       name : '',
-      username:''
+      username:'',
+      teacherNumber:''
     }
   }).then(res =>{
     if(res.code !== '200'){
@@ -190,8 +218,10 @@ const reset = () =>{
       console.log(res.data.list)
       data.name = ''
       data.username = ''
+      data.teacherNumber=''
       data.tableData = res.data?.list || []
       data.total = res.data?.total || 0
+      loadDeptName()
     }
 
   })
@@ -199,17 +229,21 @@ const reset = () =>{
 const formRef = ref();
 //校验规则
 const rules = reactive({
-  username: [
-    { required: true, message: '请输入管理员用户名', trigger: 'blur' },
-    { min: 3, max: 15, message: '管理员用户名长度需在3-15个字符之内', trigger: 'blur' },
+  teacherNumber: [
+    { required: true, message: '请输入教师工号', trigger: 'blur' },
+    { min: 3, max: 15, message: '教师工号长度需在3-15个字符之内', trigger: 'blur' },
   ],
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' },
     { pattern:/^(?![0-9]+$)(?![a-zA-Z]+$)[a-zA-Z0-9]{1,50}$/ ,min: 6, max: 15, message: '密码长度需在6-15个字符之内，并且必须包含数字和字母', trigger: 'blur' , },
   ],
   name: [
-    { required: true, message: '请输入管理员姓名', trigger: 'blur' },
-    { min: 2, max: 10, message: '管理员姓名长度需在2-10个字符之内', trigger: 'blur' },
+    { required: true, message: '请输入教师姓名', trigger: 'blur' },
+    { min: 2, max: 10, message: '教师姓名长度需在2-10个字符之内', trigger: 'blur' },
+  ],
+  phone: [
+    { required: true, message: '请输入手机号', trigger: 'blur' },
+    { pattern:/^1[3-9]\d{9}$/ ,message: '手机号格式有误', trigger: 'blur' },
   ],
 })
 
@@ -218,7 +252,7 @@ const save = () =>{
   formRef.value.validate((valid)=>{
     if(valid){
       request.request({
-        url: data.form.id? '/student/update':'/student/add',
+        url: data.form.id? '/teacher/update':'/teacher/add',
         method:data.form.id? 'PUT':'POST',
         data: data.form
       }).then(res =>{
@@ -230,10 +264,16 @@ const save = () =>{
           ElMessage.error(res.msg)
         }
       })
+    }else {
+      ElMessage.error("请填写表单必填字段！")
     }
   })
 }
 
 const login_user = JSON.parse(localStorage.getItem('login_user') || '{}')
-
+const clear = (f)=>{
+  if(f === true){
+    data.form.departmentId = null
+  }
+}
 </script>

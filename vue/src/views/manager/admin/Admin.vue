@@ -211,7 +211,9 @@ const save = () =>{
         ElMessage.error(res.msg)
       }
     })
-   }
+   }else {
+    ElMessage.error("请填写表单必填字段！")
+  }
   })
 }
 

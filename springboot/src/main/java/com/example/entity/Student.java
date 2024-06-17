@@ -23,7 +23,7 @@ public class Student implements Serializable {
     private Integer id;
 
 
-    @Column(name="student_number")
+    @Column(name= "student_number")
     private String studentNumber;
 
     /**
@@ -35,8 +35,8 @@ public class Student implements Serializable {
     /**
      * student_name
      */
-    @Column(name="student_name")
-    private String studentName;
+    @Column(name= "name")
+    private String name;
 
     /**
      * gender
@@ -47,8 +47,8 @@ public class Student implements Serializable {
     /**
      * birth_date
      */
-    @Column(name="birth_date")
-    private String birthDate;
+    @Column(name="age")
+    private int age;
 
     /**
      * grade
@@ -92,6 +92,13 @@ public class Student implements Serializable {
     @Column(name="created_time")
     private String createdTime;
 
+    @Column(name="role")
+    private String role;
+
+    @Transient
+    private String token;
+
     public Student() {
     }
+
 }

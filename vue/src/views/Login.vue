@@ -42,14 +42,23 @@ import {ElMessage} from "element-plus";
 import router from "@/router";
 
 const data = reactive({
-  form:{}
+  form:{
+  }
 })
 const formRef = ref();
 //登录调用
 const login = () =>{
   formRef.value.validate((valid)=>{
     if(valid){
-      request.post(`/${roles.value}/login`, data.form).then(res=>{
+      if(roles.value === 'student'){
+        data.form.studentNumber = data.form.username
+      }
+      if(roles.value === 'teacher'){
+        data.form.teacherNumber = data.form.username
+      }
+      data.form.role = roles.value
+
+      request.post(`/${roles.value}/login`,data.form).then(res=>{
         if (res.code === '200') {
           localStorage.setItem('login_user', JSON.stringify(res.data))
           router.push('/home') // 跳转到主页

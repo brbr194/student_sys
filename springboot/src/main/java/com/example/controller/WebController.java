@@ -10,9 +10,6 @@ public class WebController {
     /**
      * 默认请求接口
      */
-    @GetMapping("/")
-    public Result hello() {
-        return Result.success();
-    }
+
 
 }

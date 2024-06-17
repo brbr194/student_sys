@@ -40,7 +40,7 @@
             <el-icon><HomeFilled /></el-icon>
             <span>系统首页</span>
           </el-menu-item>
-          <el-sub-menu index="2">
+          <el-sub-menu index="2" v-if="user.role === 'ADMIN'">
             <template #title>
               <el-icon><Memo /></el-icon>
               <span>信息管理</span>
@@ -53,23 +53,83 @@
               <el-icon><UserFilled /></el-icon>
               <span>教师信息</span>
             </el-menu-item>
+            <el-menu-item index="/department">
+              <el-icon><SuitcaseLine /></el-icon>
+              <span>学院信息</span>
+            </el-menu-item>
+            <el-menu-item index="/grade">
+              <el-icon><Suitcase /></el-icon>
+              <span>年级信息</span>
+            </el-menu-item>
+            <el-menu-item index="/course">
+              <el-icon><Calendar /></el-icon>
+              <span>课程信息</span>
+            </el-menu-item>
+            <el-menu-item index="/semester">
+              <el-icon><Calendar /></el-icon>
+              <span>学期信息</span>
+            </el-menu-item>
             <el-menu-item index="/admin">
               <el-icon><UserFilled /></el-icon>
               <span>管理员信息</span>
             </el-menu-item>
           </el-sub-menu>
-          <el-menu-item index="/person">
+
+<!--          <el-sub-menu  index="3" v-if="user.role === 'STUDENT'">
+            <template #title>
+              <el-icon><Memo /></el-icon>
+              <span>课程与成绩</span>
+            </template>
+          </el-sub-menu>-->
+
+          <el-sub-menu  index="4" v-if="user.role !== 'STUDENT'">
+            <template #title>
+              <el-icon><Memo /></el-icon>
+              <span>授课管理</span>
+            </template>
+            <el-menu-item index="/teacherCourseList">
+              <el-icon><UserFilled /></el-icon>
+              <span>授课列表</span>
+            </el-menu-item>
+            <el-menu-item index="/teacherSelectCourse" v-if="user.role === 'TEACHER'">
+              <el-icon><UserFilled /></el-icon>
+              <span>选择授课</span>
+            </el-menu-item>
+          </el-sub-menu>
+
+          <el-sub-menu  index="5" v-if="user.role !== 'TEACHER'">
+            <template #title>
+              <el-icon><Memo /></el-icon>
+              <span>选课管理</span>
+            </template>
+            <el-menu-item index="/studentCourseList">
+              <el-icon><UserFilled /></el-icon>
+              <span>学生所选课列表</span>
+            </el-menu-item>
+            <el-menu-item index="/studentSelectCourse" v-if="user.role === 'STUDENT'">
+              <el-icon><UserFilled /></el-icon>
+              <span>学生选课区</span>
+            </el-menu-item>
+          </el-sub-menu>
+
+          <el-menu-item index="/teacherPerson" v-if="user.role === 'TEACHER'">
             <el-icon><User /></el-icon>
-            <span>个人资料</span>
+            <span>教师个人信息管理</span>
+          </el-menu-item>
+
+          <el-menu-item index="/score" v-if="user.role === 'STUDENT'">
+            <el-icon><Tickets /></el-icon>
+            <span>课程成绩查看</span>
+          </el-menu-item>
+          <el-menu-item index="/stuPerson" v-if="user.role === 'STUDENT'">
+            <el-icon><User /></el-icon>
+            <span>学生个人信息管理</span>
           </el-menu-item>
           <el-menu-item index="/log">
             <el-icon><Tickets /></el-icon>
             <span>日志查看</span>
           </el-menu-item>
-<!--          <el-menu-item index="login" @click="logout">-->
-<!--            <el-icon><SwitchButton /></el-icon>-->
-<!--            <span>退出系统</span>-->
-<!--          </el-menu-item>-->
+
         </el-menu>
       </div>
 
