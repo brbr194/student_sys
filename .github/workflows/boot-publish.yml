@@ -44,10 +44,12 @@ jobs:
 
       - name: Build SpringBoot application
         run: |
+          cd springboot
           mvn clean package -DskipTests
 
       - name: Build Docker images
         run: |
+          cd springboot
           docker build -t ${{env.PROJECT_NAME}}:${{env.PRO_VERSION}}.${{ env.BUILD_NUMBER }} .
 
       - name: Login to Aliyun Container Registry
