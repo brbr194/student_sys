@@ -40,7 +40,7 @@ jobs:
 
       - name: Build Docker images
         run: |
-          cd cloud-disks-ui
+          cd vue
           docker build -t ${{env.PROJECT_NAME}}:${{env.PRO_VERSION}}.${{ env.BUILD_NUMBER }} .
 
       - name: Login to Aliyun Container Registry
