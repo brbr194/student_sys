@@ -1,12 +1,13 @@
 <template >
   <div>
     <div class="card" style="margin-bottom: 10px;">
-      <el-input  v-model="data.courseNo" :prefix-icon="Search" style="width: 250px; margin-right: 10px" placeholder="请输入课程编号进行查询"></el-input>
-      <el-input  v-model="data.courseName" :prefix-icon="Search" style="width: 250px; margin-right: 10px" placeholder="请输入课程名进行查询"></el-input>
+      <el-input  v-model="data.courseNo" :prefix-icon="Search" style="width: 250px; margin-right: 10px; " placeholder="请输入课程编号进行查询"></el-input>
+      <el-input  v-model="data.courseName" :prefix-icon="Search" style="width: 250px; margin-right: 10px;" placeholder="请输入课程名进行查询"></el-input>
+      <!--      <el-input  v-model="data.credits" :prefix-icon="Search" style="width: 250px; margin-right: 10px" placeholder="请输入课程学分进行查询"></el-input>-->
       <el-select
           v-model="data.semester"
           clearable
-          placeholder="选择学期"
+          placeholder="选择学期进行查询"
           style="width: 250px; margin-right: 10px"
       >
         <el-option
@@ -20,19 +21,21 @@
       <el-button type="info" style="margin: 0 10px" @click="reset">重置</el-button>
     </div>
     <div class="card" style="line-height: 30px;margin-bottom: 10px">
-      <div style="color: #6E77F2">以下是可选课程情况</div>
+      <div style="color: #6E77F2">以下是所有可选课程</div>
     </div>
     <div class="card" style="margin-bottom: 10px">
+
       <el-table stripe :data="data.tableData" ref="tableRef">
         <el-table-column label="课程编号" prop="courseNo"></el-table-column>
         <el-table-column label="课程名" prop="courseName"></el-table-column>
-        <el-table-column label="任课教师" prop="teacherName" v-if="data.user.role !== 'TEACHER'"></el-table-column>
+        <el-table-column label="授课教师" prop="teacherName"></el-table-column>
         <el-table-column label="课程开设学期" prop="semester"></el-table-column>
+        <el-table-column label="课程学分" prop="credits"></el-table-column>
+        <el-table-column label="创建时间" prop="createdTime"></el-table-column>
+        <el-table-column label="更新时间" prop="updatedTime"></el-table-column>
         <el-table-column label="操作" align="center" width="160">
           <template #default="scope">
-            <!--            <el-button type="primary" @click="handleEdit(scope.row)"  >编辑</el-button>
-                        <el-button type="danger" @click="handleDelete(scope.row.id)" >删除</el-button>-->
-            <el-button type="info" @click="selectCourse(scope.row)" >选课</el-button>
+            <el-button type="primary" @click="handleSelectCourse(scope.row)">选课</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -51,6 +54,8 @@
         </el-pagination>
       </div>
     </div>
+
+
   </div>
 </template>
 
@@ -68,79 +73,16 @@ const data = reactive({
   courseNo:'',
   semester:'',
   pageNum: 1,//当前页码
+  formVisible: false,
   tableData: [],
   total:0,
   pageSize:5,//一页的条数
   semesters:[],
   user:JSON.parse(localStorage.getItem('login_user') || '{}')
 })
-
 const formRef = ref();
 
-//分页查询加载
-const load = () =>{
-  let params = {
-    pageNum:data.pageNum,
-    pageSize:data.pageSize,
-    courseNo:data.courseNo,
-    courseName:data.courseName,
-    semester:data.semester
-  }
-  if(data.user.role === 'TEACHER'){//如果是老师就查自己的数据
-    params.teacherId = data.user.id;
-  }
-  request.get('/teacherCourse/selectPage',{
-    params:params
-  }).then(res =>{
-    if(res.code !== '200'){
-      ElMessage.error(res.msg)
-    }else{
-      data.tableData = res.data?.list || []
-      data.total = res.data?.total || 0
-    }
 
-  })
-}
-load()
-
-//处理当前页的变化
-const handleCurrentChange = (pageNum)=>{
-  data.pageNum = pageNum
-  load()
-}
-//处理每一页条数的变化
-const handleSizeChange=(pageSize)=> {
-  data.pageSize = pageSize
-  load()
-}
-//重置搜索框
-const reset = () =>{
-  let params = {
-    pageNum:1,
-    pageSize:data.pageSize,
-    courseNo:'',
-    courseName:'',
-    semester:''
-  }
-  if(data.user.role === 'TEACHER'){//如果是老师就查自己的数据
-    params.teacherId = data.user.id;
-  }
-  request.get('/teacherCourse/selectPage',{
-    params:params
-  }).then(res =>{
-    if(res.code !== '200'){
-      ElMessage.error(res.msg)
-    }else{
-      console.log(res.data.list)
-      data.courseNo=''
-      data.courseName=''
-      data.semester=''
-      data.tableData = res.data?.list || []
-      data.total = res.data?.total || 0
-    }
-
-  })
-}
 
 const loadSemester = ()=>{
   request.get('/semester/all',).then(res =>{
@@ -156,23 +98,100 @@ const loadSemester = ()=>{
     }
   })
 }
+const loadTeacher = ()=>{
+  request.get('/teacher/all',).then(res =>{
+    if(res.code !== '200'){
+      ElMessage.error(res.msg)
+    }else{
+      console.log(res.data)
+      if(res.data !== []){
+        data.teachers = JSON.parse(JSON.stringify(res.data))
+      }else{
+        data.teachers = []
+      }
+    }
+  })
+}
+
+
+//分页查询加载
+const load = () =>{
+  request.get('/course/selectPage',{
+    params:{
+      pageNum:data.pageNum,
+      pageSize:data.pageSize,
+      courseNo:data.courseNo,
+      courseName:data.courseName,
+      credits:data.credits,
+      semester:data.semester
+    }
+  }).then(res =>{
+    if(res.code !== '200'){
+      ElMessage.error(res.msg)
+    }else{
+      data.tableData = res.data?.list || []
+      data.total = res.data?.total || 0
+    }
+
+  })
+}
+load()
 loadSemester()
-const selectCourse = (row) =>{
+//处理当前页的变化
+const handleCurrentChange = (pageNum)=>{
+  data.pageNum = pageNum
+  load()
+}
+//处理每一页条数的变化
+const handleSizeChange=(pageSize)=> {
+  data.pageSize = pageSize
+  load()
+}
+
+//重置搜索框
+const reset = () =>{
+  request.get('/course/selectPage',{
+    params:{
+      pageNum:1,
+      pageSize:data.pageSize,
+      courseNo:'',
+      courseName:'',
+      credits:'',
+      semester:''
+    }
+  }).then(res =>{
+    if(res.code !== '200'){
+      ElMessage.error(res.msg)
+    }else{
+      console.log(res.data.list)
+      data.courseNo=''
+      data.courseName=''
+      data.credits=''
+      data.semester=''
+      data.tableData = res.data?.list || []
+      data.total = res.data?.total || 0
+    }
+
+  })
+}
+
+const handleSelectCourse = (row) =>{
   console.log(row)
   request.post('/studentCourse/add',
       {
         studentId:data.user.id,
         courseName: row.courseName,
         courseNo: row.courseNo,
-        tcId:row.id,
+        courseId:row.id,
         semester:row.semester,
         teacherName:row.teacherName
       }).then(res=>{
     if(res.code ==='200'){
-      ElMessage.success("选择成功")
+      ElMessage.success("选课成功")
     }else{
       ElMessage.error(res.msg)
     }
   })
 }
+
 </script>

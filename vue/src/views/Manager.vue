@@ -3,7 +3,7 @@
     <div style="height: 60px; background-color: #fff; display: flex; align-items: center; border-bottom: 1px solid #ddd">
       <div style="flex: 1">
         <div style="padding-left: 20px; display: flex; align-items: center">
-          <img src="@/assets/imgs/logo.png" alt="" style="width: 40px">
+          <img src="../assets/imgs/logo.png" alt="" style="width: 40px">
           <div style="font-weight: bold; font-size: 24px; margin-left: 5px">学生成绩管理系统</div>
         </div>
       </div>
@@ -57,6 +57,10 @@
               <el-icon><SuitcaseLine /></el-icon>
               <span>学院信息</span>
             </el-menu-item>
+            <el-menu-item index="/major">
+              <el-icon><Stopwatch /></el-icon>
+              <span>专业信息</span>
+            </el-menu-item>
             <el-menu-item index="/grade">
               <el-icon><Suitcase /></el-icon>
               <span>年级信息</span>
@@ -75,55 +79,88 @@
             </el-menu-item>
           </el-sub-menu>
 
-<!--          <el-sub-menu  index="3" v-if="user.role === 'STUDENT'">
-            <template #title>
-              <el-icon><Memo /></el-icon>
-              <span>课程与成绩</span>
-            </template>
-          </el-sub-menu>-->
 
-          <el-sub-menu  index="4" v-if="user.role !== 'STUDENT'">
+
+          <el-sub-menu  index="4" v-if="user.role === 'TEACHER'">
             <template #title>
               <el-icon><Memo /></el-icon>
-              <span>授课管理</span>
+              <span>教师授课管理</span>
             </template>
             <el-menu-item index="/teacherCourseList">
               <el-icon><UserFilled /></el-icon>
               <span>授课列表</span>
             </el-menu-item>
-            <el-menu-item index="/teacherSelectCourse" v-if="user.role === 'TEACHER'">
+            <el-menu-item index="/TeacherAddScore">
               <el-icon><UserFilled /></el-icon>
-              <span>选择授课</span>
+              <span>授课打分</span>
             </el-menu-item>
           </el-sub-menu>
 
-          <el-sub-menu  index="5" v-if="user.role !== 'TEACHER'">
+          <el-sub-menu  index="5"  v-if="user.role === 'STUDENT'">
             <template #title>
               <el-icon><Memo /></el-icon>
-              <span>选课管理</span>
+              <span>学生选课管理</span>
             </template>
             <el-menu-item index="/studentCourseList">
-              <el-icon><UserFilled /></el-icon>
-              <span>学生所选课列表</span>
+              <el-icon><Aim /></el-icon>
+              <span>已选课列表</span>
             </el-menu-item>
             <el-menu-item index="/studentSelectCourse" v-if="user.role === 'STUDENT'">
-              <el-icon><UserFilled /></el-icon>
+              <el-icon><Pointer /></el-icon>
               <span>学生选课区</span>
             </el-menu-item>
           </el-sub-menu>
 
+          <el-sub-menu  index="6"  v-if="user.role === 'ADMIN'">
+            <template #title>
+              <el-icon><Memo /></el-icon>
+              <span>授课选课管理</span>
+            </template>
+            <el-menu-item index="/studentCourseList">
+              <el-icon><Aim /></el-icon>
+              <span>已选课列表</span>
+            </el-menu-item>
+            <el-menu-item index="/teacherCourseList">
+              <el-icon><Pointer /></el-icon>
+              <span>授课列表</span>
+            </el-menu-item>
+          </el-sub-menu>
+
+          <el-menu-item index="/StudentScore" v-if="user.role === 'STUDENT'">
+            <el-icon><Histogram /></el-icon>
+            <span>课程成绩查看</span>
+          </el-menu-item>
+          <el-menu-item index="/AdminScore" v-if="user.role === 'ADMIN'">
+            <el-icon><Histogram /></el-icon>
+            <span>课程成绩管理</span>
+          </el-menu-item>
+          <el-menu-item index="/TeacherManageScore" v-if="user.role === 'TEACHER'">
+            <el-icon><Histogram /></el-icon>
+            <span>课程成绩管理</span>
+          </el-menu-item>
+          <el-menu-item index="/AuditScore" v-if="user.role === 'ADMIN'">
+            <el-icon><CircleCheck /></el-icon>
+            <span>送审成绩管理</span>
+          </el-menu-item>
+          <el-menu-item index="/AdminStatistics" v-if="user.role === 'ADMIN'">
+            <el-icon><PieChart /></el-icon>
+            <span>数据统计</span>
+          </el-menu-item>
+          <el-menu-item index="/TeacherStatistics" v-if="user.role === 'TEACHER'">
+            <el-icon><PieChart /></el-icon>
+            <span>数据统计</span>
+          </el-menu-item>
           <el-menu-item index="/teacherPerson" v-if="user.role === 'TEACHER'">
             <el-icon><User /></el-icon>
             <span>教师个人信息管理</span>
           </el-menu-item>
-
-          <el-menu-item index="/score" v-if="user.role === 'STUDENT'">
-            <el-icon><Tickets /></el-icon>
-            <span>课程成绩查看</span>
-          </el-menu-item>
           <el-menu-item index="/stuPerson" v-if="user.role === 'STUDENT'">
             <el-icon><User /></el-icon>
             <span>学生个人信息管理</span>
+          </el-menu-item>
+          <el-menu-item index="/adminPerson" v-if="user.role === 'ADMIN'">
+            <el-icon><User /></el-icon>
+            <span>管理员个人信息管理</span>
           </el-menu-item>
           <el-menu-item index="/log">
             <el-icon><Tickets /></el-icon>
@@ -153,7 +190,16 @@ const logout = () => {
   router.push('/login')
 }
 
+
+
 const user = JSON.parse(localStorage.getItem('login_user') || '{}')
+
+const noUser = () =>{
+  if(!user.id){
+    router.push('/login')
+  }
+}
+noUser()
 
 </script>
 
@@ -162,7 +208,7 @@ const user = JSON.parse(localStorage.getItem('login_user') || '{}')
   background-color: #dcede9 !important;
 }
 .el-menu-item:hover {
-  color: #11A983;
+  color: #59d1ec;
 }
 :deep(th)  {
   color: #333;

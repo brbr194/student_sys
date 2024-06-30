@@ -24,11 +24,11 @@ public class StudentCourse {
     @Column(name="course_no")
     private String courseNo;
 
-    @Column(name="tc_id")
-    private String tcId;
+    @Column(name= "course_id")
+    private Integer courseId;
 
     @Column(name="student_id")
-    private String studentId;
+    private Integer studentId;
 
     @Column(name="teacher_name")
     private String teacherName;
@@ -38,6 +38,12 @@ public class StudentCourse {
      */
     @Column(name="semester")
     private String semester;
+
+    @Column(name = "state")
+    private String state;
+
+    @Column(name = "teacher_id")
+    private Integer teacherId;
 
     @Transient
     private String studentName;

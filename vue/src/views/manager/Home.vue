@@ -13,6 +13,8 @@
   import {ElMessage} from "element-plus";
 
   const user = JSON.parse(localStorage.getItem('login_user') || '{}')
+
+
   console.log(user)
   // 检查 user 是否为空对象
   if (Object.keys(user).length === 0) {

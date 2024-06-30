@@ -1,7 +1,7 @@
 package com.example.service;
 
+import com.example.entity.Score;
 import com.example.entity.StudentCourse;
-import com.example.entity.TeacherCourse;
 import com.github.pagehelper.PageInfo;
 import org.springframework.stereotype.Service;
 
@@ -12,4 +12,5 @@ public interface StudentCourseService {
     void add(StudentCourse studentCourse);
 
     void deleteById(Integer id);
+
 }

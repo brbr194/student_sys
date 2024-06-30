@@ -2,9 +2,6 @@
   <div>
 
     <div class="card" style="margin-bottom: 10px;">
-      <el-input  v-model="data.courseNo" :prefix-icon="Search" style="width: 250px; margin-right: 10px" placeholder="请输入课程编号进行查询"></el-input>
-      <el-input  v-model="data.courseName" :prefix-icon="Search" style="width: 250px; margin-right: 10px" placeholder="请输入课程名进行查询"></el-input>
-<!--      <el-input  v-model="data.semester" :prefix-icon="Search" style="width: 250px; margin-right: 10px" placeholder="请输入课程开设学期进行查询"></el-input>-->
       <el-select
           v-model="data.semester"
           clearable
@@ -22,7 +19,7 @@
       <el-button type="info" style="margin: 0 10px" @click="reset">重置</el-button>
     </div>
     <div class="card" style="line-height: 30px;margin-bottom: 10px">
-      <div style="color: #6E77F2">以下是您所教授的课程的情况</div>
+      <div style="color: #6E77F2">以下是所有教授的课程的情况</div>
     </div>
     <div class="card" style="margin-bottom: 10px">
       <el-table stripe :data="data.tableData" ref="tableRef">
@@ -35,7 +32,7 @@
           <template #default="scope">
             <!--            <el-button type="primary" @click="handleEdit(scope.row)"  >编辑</el-button>
                         <el-button type="danger" @click="handleDelete(scope.row.id)" >删除</el-button>-->
-            <el-button type="danger" @click="deleteSelect(scope.row.id)" >取消授课</el-button>
+            <el-button type="danger" @click="deleteSelect(scope.row.id)" v-if="data.user.role === 'ADMIN'">删除此课程</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -85,14 +82,12 @@ const load = () =>{
   let params = {
     pageNum:data.pageNum,
     pageSize:data.pageSize,
-    courseNo:data.courseNo,
-    courseName:data.courseName,
     semester:data.semester
   }
   if(data.user.role === 'TEACHER'){//如果是老师就查自己的数据
     params.teacherId = data.user.id;
   }
-  request.get('/teacherCourse/selectPage',{
+  request.get('/course/selectPage',{
     params:params
   }).then(res =>{
     if(res.code !== '200'){
@@ -121,22 +116,20 @@ const reset = () =>{
   let params = {
     pageNum:1,
     pageSize:data.pageSize,
-    courseNo:'',
-    courseName:'',
     semester:''
   }
   if(data.user.role === 'TEACHER'){//如果是老师就查自己的数据
     params.teacherId = data.user.id;
   }
-  request.get('/teacherCourse/selectPage',{
+  request.get('/course/selectPage',{
     params:params
   }).then(res =>{
     if(res.code !== '200'){
       ElMessage.error(res.msg)
     }else{
       console.log(res.data.list)
-      data.courseNo=''
-      data.courseName=''
+      //data.courseNo=''
+      //data.courseName=''
       data.semester=''
       data.tableData = res.data?.list || []
       data.total = res.data?.total || 0
@@ -163,7 +156,7 @@ loadSemester()
 const deleteSelect = (id)=>{
   ElMessageBox.confirm('删除后数据无法恢复，您确定删除吗?', '删除确认', { type: 'warning' }).then(res => {
     console.log('删除')
-    request.delete('/teacherCourse/delete/' + id).then(res=>{
+    request.delete('/course/delete/' + id).then(res=>{
       if(res.code === '200'){
         load()
         ElMessage.success("删除成功")

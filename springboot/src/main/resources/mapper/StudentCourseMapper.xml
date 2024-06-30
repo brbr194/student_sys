@@ -7,6 +7,8 @@
         select student_course.*, student.name as studentName from student_course
         left join student
         on student_course.student_id = student.id
+        left join student.teacher t
+        on t.id = student_course.teacher_id
         <where>
             <if test="courseName != null">
                 and student_course.course_name like concat('%', #{courseName}, '%')
@@ -19,6 +21,9 @@
             </if>
             <if test="studentId != null">
                 and student_course.student_id = #{studentId}
+            </if>
+            <if test="teacherId != null">
+                and student_course.teacher_id = #{teacherId}
             </if>
         </where>
     </select>

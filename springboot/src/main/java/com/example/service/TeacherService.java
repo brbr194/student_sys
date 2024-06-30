@@ -4,6 +4,8 @@ import com.example.entity.Teacher;
 import com.github.pagehelper.PageInfo;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public interface TeacherService {
     Teacher login(Teacher teacher);
@@ -17,4 +19,7 @@ public interface TeacherService {
     void deleteById(Integer id);
 
     Teacher findById(Integer id);
+
+    List<Teacher> findAll();
+
 }

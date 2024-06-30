@@ -162,6 +162,7 @@ const reset = () =>{
 const save = () =>{
   formRef.value.validate((valid)=> {
     if (valid) {
+
       request.request({
         url: data.form.id ? '/department/update' : '/department/add',
         method: data.form.id ? 'PUT' : 'POST',

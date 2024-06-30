@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import com.example.common.Result;
+import com.example.entity.Department;
 import com.example.entity.Student;
 import com.example.entity.Teacher;
 import com.example.service.StudentService;
@@ -9,6 +10,7 @@ import com.github.pagehelper.PageInfo;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @description teacher
@@ -73,6 +75,12 @@ public class TeacherController {
     public Result find(@PathVariable Integer id){
         Teacher teacher = teacherService.findById(id);
         return Result.success(teacher);
+    }
+
+    @GetMapping("/all")
+    public Result findAll(){
+        List<Teacher> all = teacherService.findAll();
+        return Result.success(all);
     }
 
 

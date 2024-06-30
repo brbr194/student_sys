@@ -26,4 +26,10 @@ public interface TeacherMapper {
             "email = #{email}, phone = #{phone}, updated_time = #{updatedTime}, department_id = #{departmentId} " +
             "where id = #{id}")
     void update(Teacher teacher);
+
+    @Select("select * from teacher")
+    List<Teacher> findAll();
+
+    @Select("select name from teacher where id = #{teacherId}")
+    Teacher getTeacherNameById(Integer teacherId);
 }

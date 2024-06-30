@@ -1,11 +1,14 @@
 package com.example.service.impl;
 
 import com.example.entity.Course;
-import com.example.entity.Semester;
+import com.example.entity.StudentCourse;
+import com.example.entity.Teacher;
 import com.example.exception.CustomException;
 import com.example.mapper.CourseMapper;
-import com.example.mapper.SemesterMapper;
+import com.example.mapper.StudentCourseMapper;
+import com.example.mapper.TeacherMapper;
 import com.example.service.CourseService;
+import com.example.service.TeacherService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.stereotype.Service;
@@ -20,7 +23,13 @@ public class CourseServiceImpl implements CourseService {
 
     @Resource
     private CourseMapper courseMapper;
+    @Resource
+    private TeacherMapper teacherMapper;
 
+
+
+    @Resource
+    private StudentCourseMapper studentCourseMapper;
 
     @Override
     public List<Course> findAll() {
@@ -36,26 +45,17 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public void add(Course course) {
-        List<Course> findByCourseName = courseMapper.findByName(course.getCourseName());
-        List<Course> findBySemester = courseMapper.findBySemester(course.getSemester());
+        Course dbcourse = courseMapper.selectByCondition(course);
         Course findByCno = courseMapper.findByCno(course.getCourseNo());
+        Teacher dbteacher = teacherMapper.getTeacherNameById(course.getTeacherId());
+        course.setTeacherName(dbteacher.getName());
         if(findByCno != null){
             throw new CustomException("课程号重复，请修改！");
         }
-        if(findByCourseName != null){
-            for(Course c: findByCourseName){
-                if(c.getSemester().equals(course.getSemester())){
-                        throw new CustomException("课程 "+course.getCourseName()+" 在学期 "+course.getSemester()+" 已存在，请修改！");
-                }
-            }
+        if(dbcourse != null){
+            throw new CustomException("已有相同信息的课程，请修改！");
         }
-        if(findBySemester != null){
-            for(Course c: findBySemester){
-                if(c.getCourseName().equals(course.getCourseName())){
-                        throw new CustomException("学期 "+course.getSemester()+" 已有名为 "+course.getCourseName()+" 的课程，请修改！");
-                }
-            }
-        }
+
         courseMapper.insert(course);
     }
 
@@ -63,36 +63,28 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public void updateById(Course course) {
-        List<Course> findByCourseName = courseMapper.findByName(course.getCourseName());
-        List<Course> findBySemester = courseMapper.findBySemester(course.getSemester());
         Course findByCno = courseMapper.findByCno(course.getCourseNo());
+        Course dbcourse = courseMapper.selectByCondition(course);
         if(findByCno != null && !Objects.equals(findByCno.getId(), course.getId())){
             throw new CustomException("课程号重复，请修改！");
         }
-        if(findByCourseName != null){
-            for(Course c: findByCourseName){
-                if(c.getSemester().equals(course.getSemester())){
-                    if(!Objects.equals(c.getId(), course.getId())){
-                        throw new CustomException("课程 "+course.getCourseName()+" 在学期 "+course.getSemester()+" 已存在，请修改！");
-                    }
-                }
+        if(dbcourse != null){
+            if(!Objects.equals(dbcourse.getId(), course.getId())){
+                throw new CustomException("已有相同信息的课程，请修改！");
             }
+
         }
-        if(findBySemester != null){
-            for(Course c: findBySemester){
-                if(c.getCourseName().equals(course.getCourseName())){
-                    if(!Objects.equals(c.getId(), course.getId())){
-                        throw new CustomException("学期 "+course.getSemester()+" 已有名为 "+course.getCourseName()+" 的课程，请修改！");
-                    }
-                }
-            }
-        }
+
         course.setUpdatedTime(String.valueOf(LocalDateTime.now()));
         courseMapper.update(course);
     }
 
     @Override
     public void deleteById(Integer id) {
+        List<StudentCourse> dbstudentCourses = studentCourseMapper.selectByCourseId(id);
+        if(!dbstudentCourses.isEmpty()){
+            throw new CustomException("有学生正在选修该课程，不能删除！");
+        }
         courseMapper.deleteById(id);
     }
 

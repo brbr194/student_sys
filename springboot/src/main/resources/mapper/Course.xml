@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.CourseMapper">
+    <select id="selectAll" resultType="com.example.entity.Course">
+        select courses.*, teacher.name as teacherName from courses
+            left join teacher
+            on courses.teacher_id = teacher.id
+        <where>
+            <if test="courseName != null">
+                and courses.course_name like concat('%', #{courseName}, '%')
+            </if>
+            <if test="courseNo != null">
+                and courses.course_no like concat('%', #{courseNo}, '%')
+            </if>
+            <if test="semester != null">
+                and courses.semester like concat('%', #{semester}, '%')
+            </if>
+            <if test="teacherId != null">
+                and courses.teacher_id = #{teacherId}
+            </if>
+        </where>
+    </select>
+    <select id="selectByCondition" resultType="com.example.entity.Course">
+        select courses.*, teacher_name as teacherName from courses
+        left join teacher
+        on courses.teacher_id = teacher.id
+        where teacher_id = #{teacherId} and course_name = #{courseName} and semester = #{semester}
+    </select>
+
+</mapper>

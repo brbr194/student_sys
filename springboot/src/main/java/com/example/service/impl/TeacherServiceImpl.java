@@ -1,8 +1,10 @@
 package com.example.service.impl;
 
+import com.example.entity.Course;
 import com.example.entity.Student;
 import com.example.entity.Teacher;
 import com.example.exception.CustomException;
+import com.example.mapper.CourseMapper;
 import com.example.mapper.TeacherMapper;
 import com.example.service.TeacherService;
 import com.example.utils.JwtTokenUtils;
@@ -20,6 +22,8 @@ public class TeacherServiceImpl  implements TeacherService {
 
     @Resource
     private TeacherMapper teacherMapper;
+    @Resource
+    private CourseMapper courseMapper;
     @Override
     public Teacher login(Teacher teacher) {
         Teacher dbteacher = teacherMapper.findByTeacherNumber(teacher.getTeacherNumber());
@@ -62,7 +66,16 @@ public class TeacherServiceImpl  implements TeacherService {
 
     @Override
     public void deleteById(Integer id) {
+        List<Course> dbcourse = courseMapper.findByTeacherId(id);
+        if(!dbcourse.isEmpty()){
+            throw new CustomException("该老师正在教授课程，不能删除！");
+        }
         teacherMapper.deleteById(id);
+    }
+
+    @Override
+    public List<Teacher> findAll() {
+        return teacherMapper.findAll();
     }
 
     @Override

@@ -1,10 +1,23 @@
 import { ElMessage } from 'element-plus'
 import router from '../router'
 import axios from "axios";
+import {globals} from "@/main";
+
+// const serverUrl = globals.$config?.serverUrl || 'http://localhost:9090/api'
+
+let serverUrl = '';
+switch (process.env.NODE_ENV) {
+    case 'development':
+        serverUrl = "http://localhost:9090/api"  //开发环境url
+        break
+    case 'production':
+        serverUrl = "http://carrocean.top:9090/api"   //生产环境url
+        break
+}
 
 const request = axios.create({
     //baseURL: import.meta.env.VITE_BASE_URL,
-    baseURL: 'http://localhost:9090/api',
+    baseURL: serverUrl,
     timeout: 30000  // 后台接口超时时间设置
 })
 

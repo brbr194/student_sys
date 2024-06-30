@@ -37,6 +37,12 @@ public class Course {
     @Column(name="semester")
     private String semester;
 
+    @Column(name="teacher_id")
+    private Integer teacherId;
+
+    @Column(name="teacher_name")
+    private String teacherName;
+
     /**
      * created_time
      */

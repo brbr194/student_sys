@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.ScoreMapper">
+
+    <select id="selectAll" resultType="com.example.entity.Score">
+        select score.*, student.name as studentName, student.student_number as studentNumber,courses.course_name as courseName,courses.teacher_name as teacherName,courses.course_no as courseNo
+        from score
+        left join student
+        on score.student_id = student.id
+        left join courses
+        on score.course_id = courses.id
+        <where>
+            <if test="studentName != null">and student.name like concat('%', #{studentName}, '%')</if>
+            <if test="courseName != null">and courses.course_name like concat('%', #{courseName}, '%')</if>
+            <if test="semester != null">and score.semester like concat('%', #{semester}, '%')</if>
+            <if test="studentId != null">and score.student_id = #{studentId} and state = '审核通过'</if>
+            <if test="teacherId != null">and courses.teacher_id = #{teacherId}</if>
+            <if test="studentNumber != null and studentNumber != ''">and student.student_number  = #{studentNumber}</if>
+            <if test="flag == 1"> and score between 0.0 and 59.9</if>
+        </where>
+        <choose>
+            <when test="selectRule == 1">
+                ORDER BY student.student_number ASC
+            </when>
+            <when test="selectRule == 2">
+                ORDER BY student.student_number DESC
+            </when>
+            <when test="selectRule == 3">
+                ORDER BY score ASC
+            </when>
+            <when test="selectRule == 4">
+                ORDER BY score DESC
+            </when>
+            <otherwise>
+                ORDER BY score.id DESC
+            </otherwise>
+        </choose>
+
+    </select>
+
+    <select id="selectSubmittalScore" resultType="com.example.entity.Score"
+            parameterType="com.example.entity.Score">
+        select score.*, student.name as studentName, student.student_number as studentNumber,courses.course_name as courseName,courses.teacher_name as teacherName,courses.course_no as courseNo
+        from score
+                 left join student
+                           on score.student_id = student.id
+                 left join courses
+                           on score.course_id = courses.id
+        <where>
+            <if test="studentName != null">and student.name like concat('%', #{studentName}, '%')</if>
+            <if test="courseName != null">and courses.course_name like concat('%', #{courseName}, '%')</if>
+            <if test="semester != null">and score.semester like concat('%', #{semester}, '%')</if>
+            <if test="studentNumber != null and studentNumber != ''">and student.student_number  = #{studentNumber}</if>
+            and state = '送审'
+        </where>
+    </select>
+    <select id="adminExport" resultType="com.example.entity.Score">
+        select score.*, student.name as studentName, student.student_number as studentNumber,courses.course_name as courseName,courses.teacher_name as teacherName,courses.course_no as courseNo
+        from score
+                 left join student
+                           on score.student_id = student.id
+                 left join courses
+                           on score.course_id = courses.id
+        order by score.id DESC
+    </select>
+    <select id="teacherExport" resultType="com.example.entity.Score">
+        select score.*, student.name as studentName, student.student_number as studentNumber,courses.course_name as courseName,courses.teacher_name as teacherName,courses.course_no as courseNo
+        from score
+                 left join student
+                           on score.student_id = student.id
+                 left join courses
+                           on score.course_id = courses.id
+        where courses.teacher_id = #{teacherId}
+        order by score.id DESC
+    </select>
+    <select id="findByCondition" resultType="com.example.entity.Score">
+        select score.*, student.name as studentName, student.student_number as studentNumber,courses.course_name as courseName,courses.teacher_name as teacherName,courses.course_no as courseNo
+        from score
+                 left join student
+                           on score.student_id = student.id
+                 left join courses
+                           on score.course_id = courses.id
+        where courses.course_no = #{courseNo}
+            and courses.course_name = #{courseName}
+            and courses.teacher_name = #{teacherName}
+            and student.student_number = #{studentNumber}
+            and student.name = #{studentName}
+            and score.semester = #{semester}
+
+    </select>
+</mapper>

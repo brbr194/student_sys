@@ -1,5 +1,8 @@
 package com.example.service.impl;
 
+import cn.hutool.core.io.IoUtil;
+import cn.hutool.poi.excel.ExcelUtil;
+import cn.hutool.poi.excel.ExcelWriter;
 import com.example.entity.Admin;
 import com.example.entity.Student;
 import com.example.exception.CustomException;
@@ -11,9 +14,9 @@ import com.github.pagehelper.PageInfo;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 public class StudentServiceImpl implements StudentService {
@@ -76,5 +79,15 @@ public class StudentServiceImpl implements StudentService {
         String token = JwtTokenUtils.genToken(dbStudent.getId().toString(), dbStudent.getPassword());
         dbStudent.setToken(token);
         return dbStudent;
+    }
+
+    @Override
+    public Student findByStudentNumber(String studentNumber) {
+        return studentMapper.findByStudentNumber(studentNumber);
+    }
+
+    @Override
+    public List<Student> findAll() {
+        return studentMapper.findAll();
     }
 }

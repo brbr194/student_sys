@@ -4,6 +4,8 @@ import com.example.entity.Student;
 import com.github.pagehelper.PageInfo;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public interface StudentService {
     Student findById(Integer id);
@@ -19,4 +21,11 @@ public interface StudentService {
     PageInfo<Student> selectPage(Integer pageNum, Integer pageSize, Student student);
 
     Student login(Student student);
+
+
+
+    List<Student> findAll();
+
+
+    Student findByStudentNumber(String studentNumber);
 }

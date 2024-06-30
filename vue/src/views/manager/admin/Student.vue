@@ -10,7 +10,13 @@
     <div class="card" style="margin-bottom: 10px">
       <div style="margin-bottom: 10px">
         <el-button type="primary" @click="handleAdd">新增</el-button>
+<!--          <el-button type="info" @click="handleImport">从Excel批量导入</el-button>-->
+          <el-button type="info" @click="handleExport">批量导出到Excel</el-button>
+        <el-upload action="http://localhost:9090/api/student/upload" style="display: inline-block; margin-left: 10px" :show-file-list="false" :on-success="successUpload">
+          <el-button type="info">从Excel批量导入</el-button>
+        </el-upload>
       </div>
+
       <el-table stripe :data="data.tableData" ref="tableRef" >
         <el-table-column fixed label="学生学号" prop="studentNumber" width="150px"></el-table-column>
         <el-table-column label="学生姓名" prop="name" width="125px"></el-table-column>
@@ -60,9 +66,6 @@
         <el-form-item label="学生姓名：" prop="name" required>
           <el-input v-model="data.form.name" autocomplete="off" />
         </el-form-item>
-<!--        <el-form-item label="性别：" prop="gender" required>-->
-<!--          <el-input v-model="data.form.gender" autocomplete="off" />-->
-<!--        </el-form-item>-->
         <el-form-item label="性别：" prop="gender" required>
           <el-select
               v-model="data.form.gender"
@@ -97,10 +100,6 @@
           <el-input v-model="data.form.age" autocomplete="off" />
         </el-form-item>
 
-<!--        <el-form-item label="学院：" prop="department" required>
-          <el-input v-model="data.form.department" autocomplete="off" />
-        </el-form-item>-->
-
         <el-form-item label="学院：" prop="department" required>
           <el-select
               v-model="data.form.department"
@@ -116,9 +115,21 @@
             />
           </el-select>
         </el-form-item>
-
         <el-form-item label="专业：" prop="major" required>
-          <el-input v-model="data.form.major" autocomplete="off" />
+<!--          <el-input v-model="data.form.major" autocomplete="off" />-->
+          <el-select
+              v-model="data.form.major"
+              clearable
+              placeholder="选择专业"
+              style="width: 100%;margin-bottom: 5px"
+          >
+            <el-option
+                v-for="m in data.majors"
+                :key="m.major"
+                :label="m.major"
+                :value="m.major"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="手机号：" prop="phoneNumber" required>
           <el-input v-model="data.form.phoneNumber" autocomplete="off" />
@@ -126,8 +137,6 @@
         <el-form-item label="邮箱：" prop="email" required>
           <el-input v-model="data.form.email" autocomplete="off" />
         </el-form-item>
-
-
       </el-form>
       <template #footer>
       <span class="dialog-footer">
@@ -164,7 +173,9 @@ const data = reactive({
   username:'',
   studentNumber:'',
   grades:[],
-  departments:[]
+  departments:[],
+  majors:[],
+  user:JSON.parse(localStorage.getItem('login_user') || '{}')
 })
 
 const handleAdd = () => {
@@ -172,12 +183,14 @@ const handleAdd = () => {
   data.formVisible = true
   loadGrade()
   loadDepartment()
+  loadMajor()
 }
 const handleEdit = (row) => {
   data.form = JSON.parse(JSON.stringify(row))
   data.formVisible = true
   loadGrade()
   loadDepartment()
+  loadMajor()
 }
 
 const loadGrade = () =>{
@@ -195,6 +208,21 @@ const loadGrade = () =>{
   })
 }
 
+
+const loadMajor = () =>{
+  request.get('/major/all',).then(res =>{
+    if(res.code !== '200'){
+      ElMessage.error(res.msg)
+    }else{
+
+      if(res.data !== []){
+        data.majors = JSON.parse(JSON.stringify(res.data))
+      }else{
+        data.majors = []
+      }
+    }
+  })
+}
 const loadDepartment = ()=>{
   request.get('/department/all',).then(res =>{
     if(res.code !== '200'){
@@ -348,6 +376,24 @@ const options = [
 
 ]
 
-const login_user = JSON.parse(localStorage.getItem('login_user') || '{}')
+const successUpload = (res) =>{
+  if (res.code === '200') {
+    console.log(res.msg)
+    if(res.msg === ''){
+      ElMessage.success("批量导入成功")
+    }else{
+      ElMessage.success(res.msg)
+    }
+    load()
+  } else {
+    ElMessage.error(res.msg)
+  }
+}
+
+
+const handleExport = () =>{
+  location.href = 'http://localhost:9090/api/student/export?token='  + data.user.token
+}
+
 
 </script>

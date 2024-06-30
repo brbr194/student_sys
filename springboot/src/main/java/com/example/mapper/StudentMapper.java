@@ -1,12 +1,12 @@
 package com.example.mapper;
 
+import com.example.entity.Score;
 import com.example.entity.Student;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
 @Mapper
-
 public interface StudentMapper {
 
     @Select("select * from student where name like concat('%',#{name}, '%') and student_number like concat('%',#{studentNumber}, '%')")
@@ -36,4 +36,12 @@ public interface StudentMapper {
     List<Student> findByGrade(String grade);
     @Select("select * from student where department = #{department}")
     List<Student> findByDept(String department);
+
+    @Select("select * from student")
+    List<Student> findAll();
+    @Select("select * from student where name = #{studentName} and student_number = #{studentNumber}")
+    Student findByStudentNumberAndName(Score score);
+
+    @Select("select * from student where major = #{major}")
+    List<Student> findByMajor(String major);
 }

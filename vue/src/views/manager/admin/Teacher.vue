@@ -12,14 +12,14 @@
         <el-button type="primary" @click="handleAdd">新增</el-button>
       </div>
       <el-table stripe :data="data.tableData" ref="tableRef" >
-        <el-table-column fixed label="教师工号" prop="teacherNumber" width="150px"></el-table-column>
-        <el-table-column label="教师姓名" prop="name" width="125px"></el-table-column>
-        <el-table-column label="学院" prop="departmentName" width="125px"></el-table-column>
-        <el-table-column label="手机号" prop="phone" width="125px"></el-table-column>
-        <el-table-column label="邮箱" prop="email" width="125px"></el-table-column>
-        <el-table-column label="创建时间" prop="createdTime" width="170px"></el-table-column>
-        <el-table-column label="更新时间" prop="updatedTime" width="170px"></el-table-column>
-        <el-table-column fixed="right" label="操作" align="center" width="160">
+        <el-table-column fixed label="教师工号" prop="teacherNumber" ></el-table-column>
+        <el-table-column label="教师姓名" prop="name" ></el-table-column>
+        <el-table-column label="学院" prop="departmentName"></el-table-column>
+        <el-table-column label="手机号" prop="phone" ></el-table-column>
+        <el-table-column label="邮箱" prop="email" ></el-table-column>
+        <el-table-column label="创建时间" prop="createdTime" ></el-table-column>
+        <el-table-column label="更新时间" prop="updatedTime" ></el-table-column>
+        <el-table-column fixed="right" label="操作" align="center" width="200px" >
           <template #default="scope">
             <el-button type="primary" @click="handleEdit(scope.row)" >编辑</el-button>
             <el-button type="danger" @click="handleDelete(scope.row.id)" >删除</el-button>
@@ -64,7 +64,7 @@
           <el-select
               v-model="data.form.departmentId"
               clearable
-              placeholder="选择要更改成的学院"
+              placeholder="请选择学院"
               style="width: 90%;margin-bottom: 5px"
               @visible-change="clear"
           >

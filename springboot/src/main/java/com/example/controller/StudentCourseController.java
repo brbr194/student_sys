@@ -2,10 +2,7 @@ package com.example.controller;
 
 import com.example.common.Result;
 import com.example.entity.StudentCourse;
-import com.example.entity.TeacherCourse;
 import com.example.service.StudentCourseService;
-import com.example.service.StudentService;
-import com.example.service.TeacherCourseService;
 import com.github.pagehelper.PageInfo;
 import org.springframework.web.bind.annotation.*;
 

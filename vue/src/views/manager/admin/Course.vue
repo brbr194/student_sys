@@ -1,11 +1,22 @@
 <template >
   <div>
     <div class="card" style="margin-bottom: 10px;">
-      <el-input  v-model="data.courseNo" :prefix-icon="Search" style="width: 250px; margin-right: 10px; margin-bottom: 10px" placeholder="请输入课程编号进行查询"></el-input>
-      <el-input  v-model="data.courseName" :prefix-icon="Search" style="width: 250px; margin-right: 10px;margin-bottom: 10px" placeholder="请输入课程名进行查询"></el-input>
-      <br>
-      <el-input  v-model="data.credits" :prefix-icon="Search" style="width: 250px; margin-right: 10px" placeholder="请输入课程学分进行查询"></el-input>
-      <el-input  v-model="data.semester" :prefix-icon="Search" style="width: 250px; margin-right: 10px" placeholder="请输入课程开设学期进行查询"></el-input>
+      <el-input  v-model="data.courseNo" :prefix-icon="Search" style="width: 250px; margin-right: 10px; " placeholder="请输入课程编号进行查询"></el-input>
+      <el-input  v-model="data.courseName" :prefix-icon="Search" style="width: 250px; margin-right: 10px;" placeholder="请输入课程名进行查询"></el-input>
+<!--      <el-input  v-model="data.credits" :prefix-icon="Search" style="width: 250px; margin-right: 10px" placeholder="请输入课程学分进行查询"></el-input>-->
+      <el-select
+          v-model="data.semester"
+          clearable
+          placeholder="选择学期进行查询"
+          style="width: 250px; margin-right: 10px"
+      >
+        <el-option
+            v-for="se in data.semesters"
+            :key="se.semesterName"
+            :label="se.semesterName"
+            :value="se.semesterName"
+        />
+      </el-select>
       <el-button type="primary" @click="load">查询</el-button>
       <el-button type="info" style="margin: 0 10px" @click="reset">重置</el-button>
     </div>
@@ -17,6 +28,7 @@
       <el-table stripe :data="data.tableData" ref="tableRef">
         <el-table-column label="课程编号" prop="courseNo"></el-table-column>
         <el-table-column label="课程名" prop="courseName"></el-table-column>
+        <el-table-column label="授课教师" prop="teacherName"></el-table-column>
         <el-table-column label="课程开设学期" prop="semester"></el-table-column>
         <el-table-column label="课程学分" prop="credits"></el-table-column>
         <el-table-column label="创建时间" prop="createdTime"></el-table-column>
@@ -44,7 +56,6 @@
       </div>
     </div>
 
-
     <el-dialog title="新增或编辑年级信息" width="40%" v-model="data.formVisible" :close-on-click-modal="false" destroy-on-close>
       <el-form :model="data.form" label-width="150px" style="padding-right: 50px" ref="formRef">
         <el-form-item label="课程编号：" prop="courseNo" required>
@@ -65,6 +76,22 @@
                 :key="se.semesterName"
                 :label="se.semesterName"
                 :value="se.semesterName"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="授课教师：" prop="teacherId" required>
+          {{data.form.teacherName}}
+          <el-select
+              v-model="data.form.teacherId"
+              clearable
+              placeholder="选择授课教师"
+              style="width: 100%;margin-bottom: 5px"
+          >
+            <el-option
+                v-for="te in data.teachers"
+                :key="te.id"
+                :label="te.name"
+                :value="te.id"
             />
           </el-select>
         </el-form-item>
@@ -103,7 +130,8 @@ const data = reactive({
   tableData: [],
   total:0,
   pageSize:5,//一页的条数
-  semesters:[]
+  semesters:[],
+  teachers:[]
 })
 const formRef = ref();
 
@@ -111,11 +139,13 @@ const handleAdd = () => {
   data.form = {}
   data.formVisible = true
   loadSemester()
+  loadTeacher()
 }
 const handleEdit = (row) => {
   data.form = JSON.parse(JSON.stringify(row))
   data.formVisible = true
   loadSemester()
+  loadTeacher()
 }
 const loadSemester = ()=>{
   request.get('/semester/all',).then(res =>{
@@ -131,6 +161,21 @@ const loadSemester = ()=>{
     }
   })
 }
+const loadTeacher = ()=>{
+  request.get('/teacher/all',).then(res =>{
+    if(res.code !== '200'){
+      ElMessage.error(res.msg)
+    }else{
+      console.log(res.data)
+      if(res.data !== []){
+        data.teachers = JSON.parse(JSON.stringify(res.data))
+      }else{
+        data.teachers = []
+      }
+    }
+  })
+}
+
 const handleDelete = (id) => {
   ElMessageBox.confirm('删除后数据无法恢复，您确定删除吗?', '删除确认', { type: 'warning' }).then(res => {
     console.log('删除')
@@ -173,6 +218,7 @@ const load = () =>{
   })
 }
 load()
+loadSemester()
 //处理当前页的变化
 const handleCurrentChange = (pageNum)=>{
   data.pageNum = pageNum
