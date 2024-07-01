@@ -1,10 +1,10 @@
 package com.example.controller;
 
+import com.example.common.LoginLog;
+import com.example.common.LogoutLog;
 import com.example.common.Result;
-import com.example.entity.Department;
-import com.example.entity.Student;
+import com.example.entity.Admin;
 import com.example.entity.Teacher;
-import com.example.service.StudentService;
 import com.example.service.TeacherService;
 import com.github.pagehelper.PageInfo;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +28,7 @@ public class TeacherController {
      * 登录接口
      */
     @PostMapping("/login")
+    @LoginLog("教师登录")
     public Result login(@RequestBody Teacher teacher) {
         Teacher dbteacher = teacherService.login(teacher);
         return Result.success(dbteacher);
@@ -40,8 +41,8 @@ public class TeacherController {
     public Result selectPage(@RequestParam(defaultValue = "1") Integer pageNum,
                              @RequestParam(defaultValue = "5") Integer pageSize,
                              Teacher teacher){
-        PageInfo<Teacher> studentPageInfo = teacherService.selectPage(pageNum, pageSize,teacher);
-        return Result.success(studentPageInfo);
+        PageInfo<Teacher> teacherPageInfo = teacherService.selectPage(pageNum, pageSize,teacher);
+        return Result.success(teacherPageInfo);
     }
 
     /**
@@ -83,5 +84,11 @@ public class TeacherController {
         return Result.success(all);
     }
 
+    @PostMapping("/logout")
+    @LogoutLog("教师退出登录")
+    public Result logout(@RequestBody Teacher teacher){
+        Teacher dbteacher = teacherService.findById(teacher.getId());
+        return Result.success(dbteacher);
+    }
 
 }
