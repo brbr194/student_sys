@@ -4,8 +4,11 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
+import com.example.common.LoginLog;
+import com.example.common.LogoutLog;
 import com.example.common.Result;
 import com.example.entity.Student;
+import com.example.service.LogService;
 import com.example.service.StudentService;
 import com.github.pagehelper.PageInfo;
 import org.springframework.web.bind.annotation.*;
@@ -32,9 +35,12 @@ public class StudentController {
     @Resource
     private StudentService studentService;
 
+    @Resource
+    private LogService logService;
     /**
      * 登录接口
      */
+    @LoginLog("学生登录")
     @PostMapping("/login")
     public Result login(@RequestBody Student student) {
         Student dbStudent = studentService.login(student);
@@ -149,6 +155,13 @@ public class StudentController {
             err = "成功插入"+ (infoList.size()-duplicateNum) +"条数据，有" + duplicateNum + "条数据未插入，原因是部分学生学号已存在！";
         }
         return Result.success(err);
+    }
+
+    @PostMapping("/logout")
+    @LogoutLog("学生退出登录")
+    public Result logout(@RequestBody Student student){
+        Student dbstudent = studentService.findById(student.getId());
+        return Result.success(dbstudent);
     }
 
 }

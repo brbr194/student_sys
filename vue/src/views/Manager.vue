@@ -182,17 +182,55 @@
 import { useRoute } from 'vue-router'
 import {reactive} from "vue";
 import router from "@/router";
+import {ElMessage} from "element-plus";
+import request from "@/utils/request";
 const $route = useRoute()
-console.log($route.path)
+const user = JSON.parse(localStorage.getItem('login_user') || '{}')
 
 const logout = () => {
-  localStorage.removeItem('login_user')
+  console.log(user.token)
+  let t_user={
+    id:user.id
+  }
+  if(user.role === 'ADMIN'){
+    request.post('/admin/logout',t_user).then(res=>{
+      if (res.code === '200') {
+        ElMessage.success("退出成功")
+        localStorage.removeItem('login_user')
+      } else {
+        ElMessage.error(res.msg)
+      }
+    })
+  }
+  else if(user.role === 'TEACHER'){
+
+    request.post('/teacher/logout',t_user).then(res=>{
+      if (res.code === '200') {
+        ElMessage.success("退出成功")
+        localStorage.removeItem('login_user')
+      } else {
+        ElMessage.error(res.msg)
+      }
+    })
+  }
+  else if(user.role === 'STUDENT'){
+    request.post('/student/logout', t_user ).then(res=>{
+      console.log(res.code)
+      if (res.code === '200') {
+        ElMessage.success("退出成功")
+        localStorage.removeItem('login_user')
+      }else {
+        ElMessage.error(res.msg)
+      }
+    })
+  }
+  //localStorage.removeItem('login_user')
+  //ElMessage.success("退出登录成功")
   router.push('/login')
 }
 
 
 
-const user = JSON.parse(localStorage.getItem('login_user') || '{}')
 
 const noUser = () =>{
   if(!user.id){

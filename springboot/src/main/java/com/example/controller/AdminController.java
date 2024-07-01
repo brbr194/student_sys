@@ -1,8 +1,11 @@
 package com.example.controller;
 
+import com.example.common.LoginLog;
+import com.example.common.LogoutLog;
 import com.example.common.Result;
 import com.example.entity.Admin;
 
+import com.example.entity.Student;
 import com.example.service.AdminService;
 import com.github.pagehelper.PageInfo;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +23,7 @@ public class AdminController {
      * 登录接口
      */
     @PostMapping("/login")
+    @LoginLog("管理员登录")
     public Result login(@RequestBody Admin admin) {
         Admin dbAdmin = adminService.login(admin);
         return Result.success(dbAdmin);
@@ -67,5 +71,12 @@ public class AdminController {
     public Result find(@PathVariable Integer id){
         Admin admin = adminService.findById(id);
         return Result.success(admin);
+    }
+
+    @PostMapping("/logout")
+    @LogoutLog("管理员退出登录")
+    public Result logout(@RequestBody Admin admin){
+        Admin dbadmin = adminService.findById(admin.getId());
+        return Result.success(dbadmin);
     }
 }
