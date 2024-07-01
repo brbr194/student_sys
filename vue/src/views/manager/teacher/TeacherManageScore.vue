@@ -49,7 +49,7 @@
             :value="rule.value"
         />
       </el-select>
-      <el-upload action="http://localhost:9090/api/score/upload" style="display: inline-block; margin-left: 10px; margin-right: 10px" :show-file-list="false" :on-success="successUpload">
+      <el-upload :action="data.updateUrl" style="display: inline-block; margin-left: 10px; margin-right: 10px" :show-file-list="false" :on-success="successUpload">
         <el-button type="info">从Excel批量导入</el-button>
       </el-upload>
       <el-button type="info" @click="handleExport">批量导出到Excel</el-button>
@@ -175,7 +175,9 @@ const data = reactive({
   user:JSON.parse(localStorage.getItem('login_user') || '{}'),
   flag:0,
   formVisible2:false,
-  selectRule:null
+  selectRule:null,
+  updateUrl:'',
+  exportUrl:''
 })
 
 const formRef = ref();
@@ -215,6 +217,29 @@ const load = () =>{
 }
 load()
 
+
+const loadUpdateURL = () =>{
+  switch (process.env.NODE_ENV) {
+    case 'development':
+      data.updateUrl = "http://localhost:9090/api/score/upload"  //开发环境url
+      break
+    case 'production':
+      data.updateUrl = "http://carrocean.top:9090/api/score/upload"   //生产环境url
+      break
+  }
+}
+const loadExportURL = () =>{
+  switch (process.env.NODE_ENV) {
+    case 'development':
+      data.exportUrl = "http://localhost:9090/api/score/Texport"  //开发环境url
+      break
+    case 'production':
+      data.exportUrl = "http://carrocean.top:9090/api/score/Texport"   //生产环境url
+      break
+  }
+}
+loadUpdateURL()
+loadExportURL()
 //处理当前页的变化
 const handleCurrentChange = (pageNum)=>{
   data.pageNum = pageNum
@@ -357,6 +382,7 @@ const successUpload = (res) =>{
 }
 
 const handleExport = () =>{
-  location.href = 'http://localhost:9090/api/score/Texport?token='  + data.user.token
+  console.log(data.exportUrl)
+  location.href = data.exportUrl +'?token='  + data.user.token
 }
 </script>

@@ -12,7 +12,7 @@
         <el-button type="primary" @click="handleAdd">新增</el-button>
 <!--          <el-button type="info" @click="handleImport">从Excel批量导入</el-button>-->
           <el-button type="info" @click="handleExport">批量导出到Excel</el-button>
-        <el-upload action="http://localhost:9090/api/student/upload" style="display: inline-block; margin-left: 10px" :show-file-list="false" :on-success="successUpload">
+        <el-upload :action="data.updateUrl" style="display: inline-block; margin-left: 10px" :show-file-list="false" :on-success="successUpload">
           <el-button type="info">从Excel批量导入</el-button>
         </el-upload>
       </div>
@@ -156,11 +156,6 @@ import {ElMessage, ElMessageBox} from "element-plus";
 import {Search} from "@element-plus/icons-vue";
 import {column} from "element-plus/es/components/table-v2/src/common";
 
-
-request.get('/').then(res => {
-  console.log(res)
-})
-
 //数据定义
 const data = reactive({
   name: '',
@@ -175,7 +170,9 @@ const data = reactive({
   grades:[],
   departments:[],
   majors:[],
-  user:JSON.parse(localStorage.getItem('login_user') || '{}')
+  user:JSON.parse(localStorage.getItem('login_user') || '{}'),
+  updateUrl:'',
+  exportUrl:''
 })
 
 const handleAdd = () => {
@@ -193,6 +190,26 @@ const handleEdit = (row) => {
   loadMajor()
 }
 
+const loadUpdateURL = () =>{
+  switch (process.env.NODE_ENV) {
+    case 'development':
+      data.updateUrl = "http://localhost:9090/api/student/upload"  //开发环境url
+      break
+    case 'production':
+      data.updateUrl = "http://carrocean.top:9090/api/student/upload"   //生产环境url
+      break
+  }
+}
+const loadExportURL = () =>{
+  switch (process.env.NODE_ENV) {
+    case 'development':
+      data.exportUrl = "http://localhost:9090/api/student/export"  //开发环境url
+      break
+    case 'production':
+      data.exportUrl = "http://carrocean.top:9090/api/student/export"   //生产环境url
+      break
+  }
+}
 const loadGrade = () =>{
   request.get('/grade/all',).then(res =>{
     if(res.code !== '200'){
@@ -280,6 +297,8 @@ const load = () =>{
   })
 }
 load()
+loadUpdateURL()
+loadExportURL()
 //处理当前页的变化
 const handleCurrentChange = (pageNum)=>{
   data.pageNum = pageNum
@@ -392,7 +411,8 @@ const successUpload = (res) =>{
 
 
 const handleExport = () =>{
-  location.href = 'http://localhost:9090/api/student/export?token='  + data.user.token
+  console.log(data.exportUrl)
+  location.href = data.exportUrl +'?token='  + data.user.token
 }
 
 
