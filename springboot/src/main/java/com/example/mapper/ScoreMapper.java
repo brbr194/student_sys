@@ -61,4 +61,7 @@ public interface ScoreMapper {
 
     @Select("select * from score where id = #{id}")
     Score findById(Integer id);
+
+    @Select("select * from score where student_id = #{id}")
+    List<Score> findByStudentId(Integer id);
 }

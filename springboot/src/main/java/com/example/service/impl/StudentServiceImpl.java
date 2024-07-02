@@ -4,8 +4,12 @@ import cn.hutool.core.io.IoUtil;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.example.entity.Admin;
+import com.example.entity.Score;
 import com.example.entity.Student;
+import com.example.entity.StudentCourse;
 import com.example.exception.CustomException;
+import com.example.mapper.ScoreMapper;
+import com.example.mapper.StudentCourseMapper;
 import com.example.mapper.StudentMapper;
 import com.example.service.StudentService;
 import com.example.utils.JwtTokenUtils;
@@ -24,6 +28,13 @@ public class StudentServiceImpl implements StudentService {
     @Resource
     private StudentMapper studentMapper;
 
+    @Resource
+    private ScoreMapper scoreMapper;
+
+    @Resource
+    private StudentCourseMapper studentCourseMapper;
+
+
 
     @Override
     public Student findById(Integer id) {
@@ -37,6 +48,11 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public void deleteById(Integer id) {
+        List<Score> dbscore = scoreMapper.findByStudentId(id);
+        List<StudentCourse> dbstudentCourses = studentCourseMapper.findByStudentId(id);
+        if(!dbscore.isEmpty() || !dbstudentCourses.isEmpty()){
+            throw new CustomException("该学生有成绩信息和选课信息，无法删除！");
+        }
         studentMapper.deleteById(id);
     }
 

@@ -45,4 +45,7 @@ public interface StudentCourseMapper {
 
     @Update("update student_course set state = '未打分' where id = #{id}")
     void updateStateById(Integer id);
+
+    @Select("select * from student_course where student_id = #{id}")
+    List<StudentCourse> findByStudentId(Integer id);
 }
