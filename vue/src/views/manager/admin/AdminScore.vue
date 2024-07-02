@@ -95,7 +95,7 @@
       </div>
     </div>
   </div>
-  <el-dialog title="反馈信息" width="40%" v-model="data.formVisible" :close-on-click-modal="false" destroy-on-close>
+  <el-dialog title="编辑成绩信息信息" width="40%" v-model="data.formVisible" :close-on-click-modal="false" destroy-on-close>
     <el-form :model="data.form" label-width="150px" style="padding-right: 50px" ref="formRef">
       <el-form-item label="分数：" prop="score" v-if="data.user.role ==='ADMIN'">
         <el-input v-model="data.form.score"  autocomplete="off" />

@@ -41,7 +41,7 @@
     </div>
 
 
-    <el-dialog title="新增或编辑年级信息" width="40%" v-model="data.formVisible" :close-on-click-modal="false" destroy-on-close>
+    <el-dialog title="新增或编辑学期信息" width="40%" v-model="data.formVisible" :close-on-click-modal="false" destroy-on-close>
       <el-form :model="data.form" label-width="150px" style="padding-right: 50px" ref="formRef">
         <el-form-item label="开始年份：" prop="startDate" required>
           <el-date-picker
