@@ -26,16 +26,13 @@
           <el-form-item>
             <el-button type="primary" style="width: 100%" @click="login()">登 录</el-button>
           </el-form-item>
-        <div class="button-container">
+        <div class="button-container1">
         <el-form-item>
-          还没有账号？
+                    还没有账号？
           <el-button type="info" class="button-right" style="width: 35%" @click="register()">去 注 册</el-button>
         </el-form-item>
         </div>
       </el-form>
-<!--      <div style="margin-top: 30px;text-align: right">-->
-<!--        还没有账号？请<a href="">注册</a>-->
-<!--      </div>-->
     </div>
   </div>
 </template>
@@ -80,6 +77,7 @@ const login = () =>{
 const register = () =>{
   ElMessage.error("功能未开放，请联系后台管理员！")
 }
+
 
 //校验规则
 const rules = reactive({
@@ -128,8 +126,9 @@ const options = [
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
   padding: 30px;
   border-radius: 5px;
+
 }
-.button-container {
+.button-container1 {
   display: flex;
   justify-content: flex-end; /* 这会把子元素推到容器的右边 */
 }

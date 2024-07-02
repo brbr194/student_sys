@@ -5,6 +5,9 @@
       <div><span style="color: deepskyblue ">{{ user.name }} </span> 欢迎您，祝您今天过得开心！</div>
     </div>
     <div class="card" style="margin-top: 20px">
+      <el-button type="info" class="button-left" style="width: 100%" @click="toGit()">前 往 GitHub 仓 库</el-button>
+    </div>
+    <div class="card" style="margin-top: 20px">
       <el-collapse  class="custom-collapse">
         <el-collapse-item title="管理员功能" name="1" v-if="user.role ==='ADMIN'">
           <div>
@@ -57,6 +60,7 @@
         </el-collapse-item>
       </el-collapse>
     </div>
+
   </div>
 </template>
 
@@ -72,6 +76,11 @@
   if (Object.keys(user).length === 0) {
     // 如果 user 是空对象，显示错误消息
     ElMessage.error("无token，请先登录！！！");
+  }
+
+  const toGit = ()=>{
+    //location.href = "https://github.com/brbr194/student_sys"
+    window.open('https://github.com/brbr194/student_sys', '_blank');
   }
 </script>
 
