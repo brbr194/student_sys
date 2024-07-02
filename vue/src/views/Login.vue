@@ -26,10 +26,16 @@
           <el-form-item>
             <el-button type="primary" style="width: 100%" @click="login()">登 录</el-button>
           </el-form-item>
+        <div class="button-container">
+        <el-form-item>
+          还没有账号？
+          <el-button type="info" class="button-right" style="width: 35%" @click="register()">去 注 册</el-button>
+        </el-form-item>
+        </div>
       </el-form>
-      <div style="margin-top: 30px;text-align: right">
-        还没有账号？请<a href="">注册</a>
-      </div>
+<!--      <div style="margin-top: 30px;text-align: right">-->
+<!--        还没有账号？请<a href="">注册</a>-->
+<!--      </div>-->
     </div>
   </div>
 </template>
@@ -70,15 +76,20 @@ const login = () =>{
     }
   })
 }
+
+const register = () =>{
+  ElMessage.error("功能未开放，请联系后台管理员！")
+}
+
 //校验规则
 const rules = reactive({
   username: [
     { required: true, message: '请输入用户名', trigger: 'blur' },
-    { min: 3, max: 15, message: 'Length should be 3 to 15', trigger: 'blur' },
+    { min: 3, max: 15, message: '长度应为 3 到 15', trigger: 'blur' },
   ],
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' },
-    { min: 6, max: 15, message: 'Length should be 6 to 15', trigger: 'blur' },
+    { min: 3, max: 20, message: '长度应为 3 到 20', trigger: 'blur' },
   ],
 })
 
@@ -117,5 +128,9 @@ const options = [
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
   padding: 30px;
   border-radius: 5px;
+}
+.button-container {
+  display: flex;
+  justify-content: flex-end; /* 这会把子元素推到容器的右边 */
 }
 </style>
