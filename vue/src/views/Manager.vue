@@ -224,8 +224,6 @@ const logout = () => {
       }
     })
   }
-  //localStorage.removeItem('login_user')
-  //ElMessage.success("退出登录成功")
   router.push('/login')
 }
 

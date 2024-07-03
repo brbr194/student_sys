@@ -90,6 +90,22 @@ const loadDeptName = ()=>{
       }
     }
 }
+
+const logout = () => {
+  let t_user={
+    id:login_user.id
+  }
+  request.post('/teacher/logout', t_user ).then(res=>{
+    console.log(res.code)
+    if (res.code === '200') {
+      ElMessage.success("退出成功")
+      localStorage.removeItem('login_user')
+    }else {
+      ElMessage.error(res.msg)
+    }
+  })
+}
+
 const update = () =>{
   formRef.value.validate((valid)=>{
     if(valid){
@@ -99,6 +115,7 @@ const update = () =>{
         data: data.form
       }).then(res =>{
         if(res.code === '200'){
+          logout()
           ElMessage.success("更新成功，请重新登录！")
           router.push('/login')
           localStorage.removeItem("login_user")
