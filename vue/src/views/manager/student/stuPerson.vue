@@ -65,7 +65,19 @@
         </el-form-item>
 
         <el-form-item label="专业：" prop="major" required>
-          <el-input v-model="data.form.major" autocomplete="off" />
+          <el-select
+              v-model="data.form.major"
+              clearable
+              placeholder="选择专业"
+              style="width: 100%;margin-bottom: 5px"
+          >
+            <el-option
+                v-for="m in data.majors"
+                :key="m.major"
+                :label="m.major"
+                :value="m.major"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="手机号：" prop="phoneNumber" required>
           <el-input v-model="data.form.phoneNumber" autocomplete="off" />
@@ -92,7 +104,8 @@ const login_user = JSON.parse(localStorage.getItem('login_user') || '{}')
 const data = reactive({
   form: JSON.parse(localStorage.getItem('login_user') || "{}"),
   grades:[],
-  departments:[]
+  departments:[],
+  majors:[],
 
 })
 
@@ -111,6 +124,20 @@ const loadGrade = () =>{
   })
 }
 
+const loadMajor = () =>{
+  request.get('/major/all',).then(res =>{
+    if(res.code !== '200'){
+      ElMessage.error(res.msg)
+    }else{
+
+      if(res.data !== []){
+        data.majors = JSON.parse(JSON.stringify(res.data))
+      }else{
+        data.majors = []
+      }
+    }
+  })
+}
 const loadDepartment = ()=>{
   request.get('/department/all',).then(res =>{
     if(res.code !== '200'){
@@ -127,7 +154,7 @@ const loadDepartment = ()=>{
 }
 loadGrade()
 loadDepartment()
-
+loadMajor()
 const update = () =>{
   formRef.value.validate((valid)=>{
     if(valid){
@@ -140,7 +167,6 @@ const update = () =>{
           ElMessage.success("更新成功，请重新登录！")
           router.push('/login')
           localStorage.removeItem("login_user")
-
         }else{
           ElMessage.error(res.msg)
         }
@@ -161,7 +187,7 @@ const rules = reactive({
   ],
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' },
-    { pattern:/^(?![0-9]+$)(?![a-zA-Z]+$)[a-zA-Z0-9]{1,50}$/ ,min: 6, max: 15, message: '密码长度需在6-15个字符之内，并且必须包含数字和字母', trigger: 'blur' , },
+    { min: 6, max: 15, message: '密码长度需在6-15个字符之内，并且必须包含数字和字母', trigger: 'blur' , },
   ],
   name: [
     { required: true, message: '请输入学生姓名', trigger: 'blur' },
