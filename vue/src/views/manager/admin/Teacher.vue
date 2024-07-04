@@ -265,7 +265,7 @@ const rules = reactive({
   ],
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' },
-    { pattern:/^(?![0-9]+$)(?![a-zA-Z]+$)[a-zA-Z0-9]{1,50}$/ ,min: 6, max: 15, message: '密码长度需在6-15个字符之内，并且必须包含数字和字母', trigger: 'blur' , },
+    { min: 6, max: 15, message: '密码长度需在3-20个字符之内', trigger: 'blur' , },
   ],
   name: [
     { required: true, message: '请输入教师姓名', trigger: 'blur' },
