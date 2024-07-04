@@ -69,4 +69,9 @@ public class DepartmentServiceImpl implements DepartmentService {
         departmentMapper.update(department);
     }
 
+    @Override
+    public Department findByDeptName(String departmentName) {
+        return departmentMapper.findByDeptName(departmentName);
+    }
+
 }

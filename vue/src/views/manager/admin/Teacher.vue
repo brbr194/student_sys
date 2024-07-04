@@ -11,6 +11,10 @@
       <div style="margin-bottom: 10px">
         <el-button type="primary" @click="handleAdd">新增</el-button>
       </div>
+      <el-upload :action="data.updateUrl" style="display: inline-block; margin-left: 10px; margin-right: 10px" :show-file-list="false" :on-success="successUpload">
+        <el-button type="info">从Excel批量导入</el-button>
+      </el-upload>
+      <el-button type="info" @click="handleExport">批量导出到Excel</el-button>
       <el-table stripe :data="data.tableData" ref="tableRef" >
         <el-table-column fixed label="教师工号" prop="teacherNumber" ></el-table-column>
         <el-table-column label="教师姓名" prop="name" ></el-table-column>
@@ -112,9 +116,34 @@ const data = reactive({
   pageSize:5,//一页的条数
   username:'',
   teacherNumber:'',
-  departments:[]
+  departments:[],
+  user : JSON.parse(localStorage.getItem('login_user') || '{}'),
+  updateUrl:'',
+  exportUrl:''
 })
 
+const loadUpdateURL = () =>{
+  switch (process.env.NODE_ENV) {
+    case 'development':
+      data.updateUrl = "http://localhost:9090/api/teacher/upload"  //开发环境url
+      break
+    case 'production':
+      data.updateUrl = "http://carrocean.top:9090/api/teacher/upload"   //生产环境url
+      break
+  }
+}
+const loadExportURL = () =>{
+  switch (process.env.NODE_ENV) {
+    case 'development':
+      data.exportUrl = "http://localhost:9090/api/teacher/export"  //开发环境url
+      break
+    case 'production':
+      data.exportUrl = "http://carrocean.top:9090/api/teacher/export"   //生产环境url
+      break
+  }
+}
+loadUpdateURL()
+loadExportURL()
 const handleAdd = () => {
   data.form = {}
   data.formVisible = true
@@ -190,7 +219,7 @@ const load = () =>{
 }
 load()
 loadDepartment()
-
+loadDeptName()
 //处理当前页的变化
 const handleCurrentChange = (pageNum)=>{
   data.pageNum = pageNum
@@ -270,10 +299,32 @@ const save = () =>{
   })
 }
 
-const login_user = JSON.parse(localStorage.getItem('login_user') || '{}')
+
 const clear = (f)=>{
   if(f === true){
     data.form.departmentId = null
   }
 }
+
+
+const successUpload = (res) =>{
+  if (res.code === '200') {
+    console.log(res.msg)
+    if(res.msg === ''){
+      ElMessage.success("批量导入成功")
+    }else{
+      ElMessage.success(res.msg)
+    }
+    load()
+  } else {
+    ElMessage.error(res.msg)
+  }
+}
+
+
+const handleExport = () =>{
+  console.log(data.exportUrl)
+  location.href = data.exportUrl +'?token='  + data.user.token
+}
+
 </script>

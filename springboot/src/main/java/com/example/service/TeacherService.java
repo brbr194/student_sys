@@ -22,4 +22,5 @@ public interface TeacherService {
 
     List<Teacher> findAll();
 
+    Teacher findByTeacherNumber(String teacherNumber);
 }

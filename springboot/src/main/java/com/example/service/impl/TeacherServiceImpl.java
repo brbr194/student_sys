@@ -79,6 +79,11 @@ public class TeacherServiceImpl  implements TeacherService {
     }
 
     @Override
+    public Teacher findByTeacherNumber(String teacherNumber) {
+        return teacherMapper.findByTeacherNumber(teacherNumber);
+    }
+
+    @Override
     public Teacher findById(Integer id) {
         return teacherMapper.findById(id);
     }

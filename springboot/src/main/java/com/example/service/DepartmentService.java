@@ -21,4 +21,6 @@ public interface DepartmentService {
     PageInfo<Department> selectPage(Integer pageNum, Integer pageSize, Department department);
 
     void updateById(Department department);
+
+    Department findByDeptName(String departmentName);
 }

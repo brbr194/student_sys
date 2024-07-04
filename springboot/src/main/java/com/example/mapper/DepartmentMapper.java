@@ -26,4 +26,7 @@ public interface DepartmentMapper {
 
     @Select("select * from departments where department like concat('%',#{department}, '%')")
     List<Department> selectAll(Department department);
+
+    @Select("select * from departments where department = #{departmentName}")
+    Department findByDeptName(String departmentName);
 }
