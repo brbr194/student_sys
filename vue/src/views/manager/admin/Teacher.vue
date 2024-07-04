@@ -265,7 +265,7 @@ const rules = reactive({
   ],
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' },
-    { min: 6, max: 15, message: '密码长度需在3-20个字符之内', trigger: 'blur' , },
+    { min: 3, max: 20, message: '密码长度需在3-20个字符之内', trigger: 'blur' , },
   ],
   name: [
     { required: true, message: '请输入教师姓名', trigger: 'blur' },
@@ -281,6 +281,7 @@ const rules = reactive({
 const save = () =>{
   formRef.value.validate((valid)=>{
     if(valid){
+      console.log(data.form)
       request.request({
         url: data.form.id? '/teacher/update':'/teacher/add',
         method:data.form.id? 'PUT':'POST',

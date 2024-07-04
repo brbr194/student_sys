@@ -22,7 +22,7 @@ public interface TeacherMapper {
     @Select("select * from teacher where name like concat('%',#{name}, '%') " +
             "and teacher_number like concat('%',#{teacherNumber}, '%') ")
     List<Teacher> selectAll(Teacher teacher);
-    @Update("update teacher set teacher_number = #{teacherNumber}, name = #{name}, " +
+    @Update("update teacher set teacher_number = #{teacherNumber}, name = #{name}, password = #{password}, " +
             "email = #{email}, phone = #{phone}, updated_time = #{updatedTime}, department_id = #{departmentId} " +
             "where id = #{id}")
     void update(Teacher teacher);
