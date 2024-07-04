@@ -10,11 +10,12 @@
     <div class="card" style="margin-bottom: 10px">
       <div style="margin-bottom: 10px">
         <el-button type="primary" @click="handleAdd">新增</el-button>
+        <el-upload :action="data.updateUrl" style="display: inline-block; margin-left: 10px; margin-right: 10px" :show-file-list="false" :on-success="successUpload">
+          <el-button type="info">从Excel批量导入</el-button>
+        </el-upload>
+        <el-button type="info" @click="handleExport">批量导出到Excel</el-button>
       </div>
-      <el-upload :action="data.updateUrl" style="display: inline-block; margin-left: 10px; margin-right: 10px" :show-file-list="false" :on-success="successUpload">
-        <el-button type="info">从Excel批量导入</el-button>
-      </el-upload>
-      <el-button type="info" @click="handleExport">批量导出到Excel</el-button>
+
       <el-table stripe :data="data.tableData" ref="tableRef" >
         <el-table-column fixed label="教师工号" prop="teacherNumber" ></el-table-column>
         <el-table-column label="教师姓名" prop="name" ></el-table-column>
@@ -191,7 +192,7 @@ const loadDeptName = ()=>{
   for(let i = 0;i<data.tableData.length;i++){
     let row = data.tableData[i];
     for(let j = 0;j<data.departments.length;j++){
-      if(row.departmentId == data.departments[j].id){
+      if(row.departmentId === data.departments[j].id){
         data.tableData[i].departmentName = data.departments[j].department;
       }
     }

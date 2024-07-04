@@ -19,4 +19,7 @@ public interface MajorService {
     PageInfo<Major> selectPage(Integer pageNum, Integer pageSize, Major major);
 
     void updateById(Major major);
+
+
+    Major findByMajor(String major);
 }

@@ -1,5 +1,6 @@
 package com.example.entity;
 
+import cn.hutool.core.annotation.Alias;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -12,6 +13,7 @@ public class Major {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Alias("专业名称")
     @Column(name="major")
     private String major;
 

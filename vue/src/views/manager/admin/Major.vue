@@ -9,7 +9,12 @@
     <div class="card" style="margin-bottom: 10px">
       <div style="margin-bottom: 10px">
         <el-button type="primary" @click="handleAdd">新增</el-button>
+        <el-button type="info" @click="handleExport">批量导出到Excel</el-button>
+        <el-upload :action="data.updateUrl" style="display: inline-block; margin-left: 10px" :show-file-list="false" :on-success="successUpload">
+          <el-button type="info">从Excel批量导入</el-button>
+        </el-upload>
       </div>
+
       <el-table stripe :data="data.tableData" ref="tableRef">
         <el-table-column label="专业名" prop="major"></el-table-column>
         <el-table-column label="创建时间" prop="createdTime"></el-table-column>
@@ -72,7 +77,10 @@ const data = reactive({
   tableData: [],
   total:0,
   pageSize:5,//一页的条数
-  majors:[]
+  majors:[],
+  user : JSON.parse(localStorage.getItem('login_user') || '{}'),
+  updateUrl:'',
+  exportUrl:''
 })
 const formRef = ref();
 
@@ -104,6 +112,29 @@ const handleDelete = (id) => {
   })
 }
 
+
+const loadUpdateURL = () =>{
+  switch (process.env.NODE_ENV) {
+    case 'development':
+      data.updateUrl = "http://localhost:9090/api/major/upload"  //开发环境url
+      break
+    case 'production':
+      data.updateUrl = "http://carrocean.top:9090/api/major/upload"   //生产环境url
+      break
+  }
+}
+const loadExportURL = () =>{
+  switch (process.env.NODE_ENV) {
+    case 'development':
+      data.exportUrl = "http://localhost:9090/api/major/export"  //开发环境url
+      break
+    case 'production':
+      data.exportUrl = "http://carrocean.top:9090/api/major/export"   //生产环境url
+      break
+  }
+}
+loadUpdateURL()
+loadExportURL()
 //分页查询加载
 const load = () =>{
   request.get('/major/selectPage',{
@@ -181,4 +212,24 @@ const save = () =>{
     }
   })
 }
+
+const successUpload = (res) =>{
+  if (res.code === '200') {
+    console.log(res.msg)
+    if(res.msg === ''){
+      ElMessage.success("批量导入成功")
+    }else{
+      ElMessage.success(res.msg)
+    }
+    load()
+  } else {
+    ElMessage.error(res.msg)
+  }
+}
+const handleExport = () =>{
+  console.log(data.exportUrl)
+  location.href = data.exportUrl +'?token='  + data.user.token
+}
+
+
 </script>

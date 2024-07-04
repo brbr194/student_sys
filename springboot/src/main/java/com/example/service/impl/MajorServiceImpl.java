@@ -60,6 +60,11 @@ public class MajorServiceImpl implements MajorService {
     }
 
     @Override
+    public Major findByMajor(String major) {
+        return majorMapper.findByMajorName(major);
+    }
+
+    @Override
     public void updateById(Major major) {
         Major dbmajor = majorMapper.findByMajorName(major.getMajor());
         if(dbmajor != null && !Objects.equals(dbmajor.getId(), major.getId())){
