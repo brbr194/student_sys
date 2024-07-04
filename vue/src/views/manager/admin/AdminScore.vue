@@ -67,7 +67,7 @@
         </el-table-column>
         <el-table-column label="课程评语" prop="comment" width="100px" show-overflow-tooltip></el-table-column>
         <el-table-column label="课程反馈" prop="feedback" width="100px" show-overflow-tooltip></el-table-column>
-        <el-table-column label="成绩状态" prop="state">
+        <el-table-column label="成绩状态" prop="state" width="120px" >
           <template #default="scope">
             <el-tag :type="scope.row.state==='审核通过'?'success':scope.row.state==='回退修改'?'warning':scope.row.state==='可编辑'?'info':'primary'" effect="dark">{{scope.row.state}}</el-tag>
           </template>
