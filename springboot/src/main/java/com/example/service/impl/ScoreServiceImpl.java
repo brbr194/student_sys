@@ -52,7 +52,12 @@ public class ScoreServiceImpl implements ScoreService {
     public void deleteById(Integer id) {
         //TODO
         Score dbscore = scoreMapper.findById(id);
-        StudentCourse dbstudentCourse = studentCourseMapper.findByStudentAndCourseId(dbscore);
+        StudentCourse dbstudentCourse;
+        try{
+            dbstudentCourse = studentCourseMapper.findByStudentAndCourseId(dbscore);
+        }catch (Exception e){
+            throw new CustomException(e.getMessage());
+        }
         if(dbstudentCourse != null){
             studentCourseMapper.updateStateById(dbstudentCourse.getId());
         }

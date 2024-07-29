@@ -43,7 +43,7 @@ public class JwtInterceptor implements HandlerInterceptor {
         // 1. 从http请求的header中获取token
         String token = request.getHeader("token");
         if (StrUtil.isBlank(token)) {
-            // 如果没拿到，我再去参数里面拿一波试试  /api/admin?token=xxxxx
+            // 如果没拿到，再去参数里面拿  /api/admin?token=xxxxx
             token = request.getParameter("token");
         }
         System.out.println(token);

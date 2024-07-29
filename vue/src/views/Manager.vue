@@ -34,7 +34,7 @@
             router
             style="border: none"
             :default-active="$route.path"
-            :default-openeds="['/home', '2']"
+            :default-openeds="['/home']"
         >
           <el-menu-item index="/home">
             <el-icon><HomeFilled /></el-icon>
@@ -226,9 +226,6 @@ const logout = () => {
   }
   router.push('/login')
 }
-
-
-
 
 const noUser = () =>{
   if(!user.id){

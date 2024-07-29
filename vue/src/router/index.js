@@ -5,8 +5,8 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'Manager',
-      component: () => import('@/views/Manager.vue'),
+      name: 'NewManager',
+      component: () => import('@/views/NewManager.vue'),
       redirect: '/login',
       children: [
         { path: 'home', name: 'Home', component: () => import('@/views/manager/Home.vue')},

@@ -382,7 +382,18 @@ const successUpload = (res) =>{
 }
 
 const handleExport = () =>{
-  console.log(data.exportUrl)
-  location.href = data.exportUrl +'?token='  + data.user.token
+  request.get('/score/all').then(res =>{
+    if(res.code === '200'){
+      console.log(res)
+      if(res.data.length === 0){
+        ElMessage.error('无数据，不可导出')
+        console.log(res.data)
+      }else{
+        location.href = data.exportUrl +'?token='  + data.user.token
+      }
+    }else{
+      ElMessage.error(res.msg)
+    }
+  })
 }
 </script>

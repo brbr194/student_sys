@@ -8,6 +8,7 @@ import cn.hutool.poi.excel.ExcelWriter;
 import com.auth0.jwt.JWT;
 import com.example.common.Result;
 import com.example.entity.*;
+import com.example.exception.CustomException;
 import com.example.mapper.StudentCourseMapper;
 import com.example.service.ScoreService;
 import com.example.service.StudentCourseService;
@@ -89,7 +90,7 @@ public class ScoreController {
         // 1. 从数据库中查询出所有数据
         List<Score> scoreList = scoreService.adminExport();
         if(scoreList.isEmpty()){
-            throw  new RuntimeException("无数据，不可导出！");
+            throw new CustomException("无数据，不可导出！");
         }
         // 2. 定义一个 List，存储处理之后的数据，用于塞到 list 里
         List<Map<String, Object>> list = new ArrayList<>();
@@ -138,7 +139,7 @@ public class ScoreController {
         tScore.setTeacherId(Integer.valueOf(teacherId));
         List<Score> scoreList = scoreService.teacherExport(tScore);
         if(scoreList.isEmpty()){
-            throw  new RuntimeException("无数据，不可导出！");
+            throw  new CustomException("无数据，不可导出！");
         }
         // 2. 定义一个 List，存储处理之后的数据，用于塞到 list 里
         List<Map<String, Object>> list = new ArrayList<>();
@@ -182,5 +183,11 @@ public class ScoreController {
             return Result.success(msg.substring(1));
         }
         return Result.success();
+    }
+
+    @GetMapping("/all")
+    public Result findAll(){
+        List<Score> all = scoreService.findAll();
+        return Result.success(all);
     }
 }

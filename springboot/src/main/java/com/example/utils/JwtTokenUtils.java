@@ -109,8 +109,5 @@ public class JwtTokenUtils {
         }
     }
 
-    @PostConstruct
-    public void setUserService() {
-        staticAdminService = adminService;
-    }
+
 }
